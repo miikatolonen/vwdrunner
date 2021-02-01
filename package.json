@@ -5,14 +5,15 @@
   "main": "app.js",
   "dependencies": {
     "three": "^0.125.2",
-    "webpack": "^5.19.0"
+    "webpack": "^5.19.0",
+    "webpack-dev-server": "^3.11.2"
   },
   "devDependencies": {
     "webpack-cli": "^4.4.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run webpack",
+    "start": "webpack serve --open",
     "webpack": "webpack --watch"
   },
   "repository": {
