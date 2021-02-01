@@ -1,0 +1,28 @@
+{
+  "name": "visualwebdesign",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "three": "^0.125.2",
+    "webpack": "^5.19.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^4.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run webpack",
+    "webpack": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miikatolonen/vwdrunner.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/miikatolonen/vwdrunner/issues"
+  },
+  "homepage": "https://github.com/miikatolonen/vwdrunner#readme"
+}

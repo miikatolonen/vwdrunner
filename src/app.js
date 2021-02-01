@@ -1,4 +1,6 @@
 
+import { GLTFLoader } from './modules/GLTFLoader'
+import * as THREE from '../node_modules/three/src/Three';
 
              let camera, scene, renderer, gltfloader;
              let cube;            
@@ -32,7 +34,7 @@
 
                 // load gorilla
 
-                gltfloader = new THREE.GLTFLoader();
+                gltfloader = new GLTFLoader();
 
                 gltfloader.load('model/gorilla.gltf', function (gltf) {
                     scene.add ( gltf.scene );
