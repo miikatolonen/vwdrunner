@@ -1,6 +1,6 @@
 
-            
-             let camera, scene, renderer;
+
+             let camera, scene, renderer, gltfloader;
              let cube;            
             
             
@@ -29,7 +29,14 @@
                 renderer = new THREE.WebGLRenderer({ antialias: true });
                 renderer.setSize(window.innerWidth,
                 Math.round(window.innerHeight * 0.8));
-			
+
+                // load gorilla
+
+                gltfloader = new THREE.GLTFLoader();
+
+                gltfloader.load('model/gorilla.gltf', function (gltf) {
+                    scene.add ( gltf.scene );
+                })
                 
             
             // add eventlistener for movement and render canvas
