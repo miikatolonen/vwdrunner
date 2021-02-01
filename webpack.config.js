@@ -12,4 +12,16 @@ module.exports = {
         index: './public/index.html'
       }
   },
+  module: {
+    rules:
+    [{
+    test: /\.(glb|gltf)$/,
+    use:
+    [{
+        loader: 'file-loader',
+        options:{
+        outputPath: 'assets/models/'
+        }}
+    ]},
+    ]}
 };
