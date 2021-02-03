@@ -216,7 +216,7 @@
   "buffers": [
     {
       "byteLength": 2140256,
-      "uri": "scene.bin"
+      "uri": "./scene.bin"
     }
   ],
   "images": [
