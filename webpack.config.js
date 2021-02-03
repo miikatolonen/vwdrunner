@@ -15,7 +15,7 @@ module.exports = {
   module:{
     rules:[
       {  test: /\.(gltf)$/, use: [{ loader: "gltf-webpack-loader"}]},
-      { test: /\.(png|jpe?g|gif|bin)$/i, use: [{ loader: 'file-loader'}]},
+      { test: /\.(png|jpe?g|gif|bin|fbx)$/i, use: [{ loader: 'file-loader'}]},
     ]
   },
 };
