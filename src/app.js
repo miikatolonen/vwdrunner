@@ -1,7 +1,7 @@
 
 import { GLTFLoader } from './modules/GLTFLoader'
 import * as THREE from '../node_modules/three/src/Three';
-import GorillaModel from './models/gorilla.gltf'
+import GorillaModel from './models/gorilla/gorilla.gltf'
 import { menu } from './scripts/menu'
 
 let camera, scene, renderer, gltfloader;
@@ -36,12 +36,10 @@ let cube;
 
         // load gorilla
         gltfloader = new GLTFLoader();
-
         gltfloader.load(GorillaModel, function (gltf) {
             scene.add ( gltf.scene );
         })
-                
-            
+                       
         // add eventlistener for movement and render canvas
         window.onload = function () {
 

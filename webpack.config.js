@@ -12,15 +12,10 @@ module.exports = {
         index: './public/index.html'
       }
   }, 
-  module: {
-    rules: [
-        {
-            test: /\.(png|jpe?g|gif|glb|gltf)$/i,
-            loader: 'file-loader',
-            options: {
-              name: 'dist/model/[name].[ext]'
-            }
-        }
+  module:{
+    rules:[
+      {  test: /\.(gltf)$/, use: [{ loader: "gltf-webpack-loader"}]},
+      { test: /\.(png|jpe?g|gif|bin)$/i, use: [{ loader: 'file-loader'}]},
     ]
   },
 };
