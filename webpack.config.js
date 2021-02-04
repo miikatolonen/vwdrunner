@@ -5,7 +5,7 @@ module.exports = {
   entry: './src/app.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'main.js'
+    filename: './dist/main.js'
   },
   devServer: {
     historyApiFallback: {
@@ -14,8 +14,7 @@ module.exports = {
   }, 
   module:{
     rules:[
-      {  test: /\.(gltf)$/, use: [{ loader: "gltf-webpack-loader"}]},
-      { test: /\.(png|jpe?g|gif|bin|fbx)$/i, use: [{ loader: 'file-loader'}]},
+      { test: /\.(png|jpe?g|gif|bin|fbx|glb|gltf)$/i, use: [{ loader: 'file-loader'}]},
     ]
   },
 };

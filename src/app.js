@@ -1,92 +1,179 @@
+import { GLTFLoader } from "./modules/GLTFLoader";
+import * as THREE from './modules/three.module'
 
-import { GLTFLoader } from './modules/GLTFLoader'
-import * as THREE from '../node_modules/three/src/Three';
-import GorillaModel from './models/gorilla/gorilla.gltf'
-import { menu } from './scripts/menu'
+let container,
+    clock,
+    gui,
+    mixer,
+    actions,
+    activeAction,
+    previousAction;
+let camera, scene, renderer, model, face;
 
-let camera, scene, renderer, gltfloader;
-let cube;            
-            
-            
-    const gameSettings = {
-        "dead": false,
-        "x-speed": 0.1,
-        "camera-position-z": 10,
-        input: {left: 0, right: 0}
-    }
-       
-    init();
+const velocity = new THREE.Vector3();
 
-     // initialize all THREEjs components
-    function init() {
-        scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-        camera.position.z = gameSettings["camera-position-z"]
-        camera.up.set = [0, 0, 1]
-        // player model, change cube to player model later
-        const geometry = new THREE.BoxGeometry();
-		const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-		cube = new THREE.Mesh( geometry, material );
-		scene.add( cube );
-                
-        // init renderer
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth,
-            Math.round(window.innerHeight * 0.8));
+let prevTime = performance.now();
 
-        // load gorilla
-        gltfloader = new GLTFLoader();
-        gltfloader.load(GorillaModel, function (gltf) {
-            scene.add ( gltf.scene );
-        })
-                       
-        // add eventlistener for movement and render canvas
-        window.onload = function () {
+//Position of Character, 0 -> middle of the screen
+let position = 0;
 
-        document.body.appendChild(renderer.domElement)
+const api = { state: "Walking" };
 
-        document.addEventListener('keydown', function(event) {
-            if(event.keyCode == 37) {
-                 gameSettings.input.left = true
-                }
-            if(event.keyCode == 39) {
-                gameSettings.input.right = true
-                }
-            if (event.keyCode == 27){
-                menu();
-                }
-            });
+init();
+animate();
 
-            document.addEventListener('keyup', function(event) {
-                if(event.keyCode == 37) {
-                    gameSettings.input.left = false
-                }
-                if(event.keyCode == 39) {
-                    gameSettings.input.right = false
-                }            
-            });
-            render();
-            }
-    }
+function init() {
+    container = document.createElement("div");
+    document.body.appendChild(container);
 
-    function updatePlayer() {
-        if (gameSettings.input.left) {                
-            cube.rotation.y -= 0.1
+    camera = new THREE.PerspectiveCamera(
+        40,
+        window.innerWidth / window.innerHeight,
+        0.25,
+        100
+    );
+    //camera.position.set( 5, 50, - 20  );
+    camera.position.set(0, 8, -2);
+    //Object distance from camera
+    //camera.position.z = -25
+    camera.position.z = -25;
+
+    //Object position in screen
+    camera.lookAt(new THREE.Vector3(0, 2, 400));
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xe0e0e0);
+    scene.fog = new THREE.Fog(0xe0e0e0, 20, 100);
+
+    clock = new THREE.Clock();
+
+    // lights
+
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
+    hemiLight.position.set(0, 20, 0);
+    scene.add(hemiLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff);
+    dirLight.position.set(0, 20, 10);
+    scene.add(dirLight);
+
+    //background IMAGE
+    /*
+    const imageLoader = new THREE.TextureLoader();
+    scene.background = imageLoader.load(
+        "/three.js/test.jpg"
+    );
+*/
+    // ground
+
+    const mesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(2000, 2000),
+        new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false })
+    );
+    mesh.rotation.x = -Math.PI / 2;
+    scene.add(mesh);
+
+    // model
+
+    const loader = new GLTFLoader();
+    loader.load(
+        "src/models/RobotExpressive.glb",
+        function (gltf) {
+            model = gltf.scene;
+            scene.add(model);
+
+            createCharacter(model, gltf.animations);
+        },
+        undefined,
+        function (e) {
+            console.error(e);
         }
-        else if (gameSettings.input.right) {
-            cube.rotation.y += 0.1
-        } 
+    );
+
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    container.appendChild(renderer.domElement);
+
+    window.addEventListener("resize", onWindowResize);
+
+}
+
+function createCharacter(model, animations) {
+    //Importing model
+    mixer = new THREE.AnimationMixer(model);
+
+    //activeAction = actions[mixer.clipAction( animations[ 3 ] ) ];
+
+    //Choosing which animation we want display -> 6 = Running
+    mixer.clipAction(animations[6]).play();
+
+    //Default position
+    model.position.set(position, 0, 0);
+}
+
+function fadeToAction(name, duration) {
+    previousAction = activeAction;
+    activeAction = actions[name];
+
+    if (previousAction !== activeAction) {
+        previousAction.fadeOut(duration);
     }
 
-    const render = function () {
-        updatePlayer();
-        renderer.render(scene, camera);
-        requestAnimationFrame(render);                   
+    activeAction
+        .reset()
+        .setEffectiveTimeScale(1)
+        .setEffectiveWeight(1)
+        .fadeIn(duration)
+        .play();
+}
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+//
+
+function animate() {
+    const dt = clock.getDelta();
+
+    if (mixer) mixer.update(dt);
+
+    requestAnimationFrame(animate);
+
+    renderer.render(scene, camera);
+
+}
+
+//MovementListener 65 -> (A), 68 -> (D), 37 -> (->), 39 -> (<-)
+document.addEventListener("keydown", onDocumentKeyDown, false);
+function onDocumentKeyDown(event) {
+    var keyCode = event.which;
+    console.log(position);
+    //Right 65 = A & 37 = <-
+    if (keyCode == 65 || keyCode == 37) {
+        if (position <= 15) {
+            position += 0.5;
+            model.position.set(position, 0, 0);
+        }
     }
-
-
-
-           
-
-
-            
+    //Left 68 = D & 39 = ->
+    else if (keyCode == 68 || keyCode == 39) {
+        if (position >= -15) {
+            position -= 0.5;
+            model.position.set(position, 0, 0);
+        }
+    }
+    //Jump
+    else if (keyCode == 87 || keyCode == 32) {
+    
+        for (let i = 0 ; i < 10 ; i += 0.00000002) {
+            model.position.set(position, i, 0);
+        }
+        
+    }
+}
