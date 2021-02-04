@@ -3,7 +3,6 @@ import * as THREE from './modules/three.module'
 
 let container,
     clock,
-    gui,
     mixer,
     actions,
     activeAction,
