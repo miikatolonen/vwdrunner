@@ -3,11 +3,18 @@ import { GLTFLoader } from "./modules/GLTFLoader";
 import * as THREE from "./modules/three.module";
 
 //Jump function
-import { jump } from "./functions/characterMovement.js";
+import { jump } from "./scripts/Movement/characterMovement.js";
 
 //Game variables
 let container, clock, mixer, activeAction, previousAction, currentAction;
 let camera, scene, renderer, model, face;
+
+//Game state
+const state = {
+  moveLeft: false,
+  moveRight: false,
+}
+
 
 
 //Position of Character, 0 -> middle of the screen
@@ -137,7 +144,7 @@ function animate() {
   const dt = clock.getDelta();
 
   if (mixer) mixer.update(dt);
-
+  updatePlayer();
   requestAnimationFrame(animate);
 
   renderer.render(scene, camera);
@@ -152,15 +159,13 @@ function onDocumentKeyDown(event) {
   //Right 65 = A & 37 = <-
   if (keyCode == 65 || keyCode == 37) {
     if (position <= 15) {
-      position += 0.5;
-      model.position.set(position, 0, 0);
+    state.moveLeft = true;  
     }
   }
   //Left 68 = D & 39 = ->
   else if (keyCode == 68 || keyCode == 39) {
     if (position >= -15) {
-      position -= 0.5;
-      model.position.set(position, 0, 0);
+      state.moveRight = true
     }
   }
   //Jump
@@ -171,5 +176,27 @@ function onDocumentKeyDown(event) {
     fadeToAction(0.5);
     //Jump logic
     jump(model, position, currentAction, activeAction);
+  }
+  updatePlayer()
+}
+
+document.addEventListener("keyup", function(event){
+  if (event.keyCode == 37 || event.keyCode == 65){
+    state.moveLeft = false;
+  }
+  if (event.keyCode == 39 || event.keyCode == 68){
+    state.moveRight = false;
+  }
+})
+
+
+function updatePlayer() {
+  if (state.moveLeft){
+    position += 0.2;
+    model.position.set(position, 0, 0);
+  }
+  else if (state.moveRight){
+    position -= 0.2;
+    model.position.set(position, 0, 0);
   }
 }
