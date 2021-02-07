@@ -10,7 +10,7 @@ How to Run ROBOT RUNNER:
 Materials
 - [ :heavy_check_mark: ] Player Model 3D with animations (Jani)
 - [ ] Obstacles Models (Jani, Ongoing)
-- [ ] Background image (Unreserved)
+- [ ] Background image (Miika)
 
 Game mechanics
 - [ :heavy_check_mark: ] Implement movement (A and D and JUMP) (Jani)
@@ -18,13 +18,13 @@ Game mechanics
 - [ ] Game Ending mechanic
 
 Game logic
-- [ ] Endgame logic (Unreserved)
+- [ ] Endgame logic (Miika)
 - [ ] Game conditions (How fast game is going, how many obstacles are spawning) (Unreserved)
 - [ ] Restrict gaming space, now the moving area is the whole screen ()
 
 UI
-- [ ] Do Starting menu (Unreserved)
-- [ ] Do GAMEUI (game points etc) (Unreserved)
+- [ ] Do Starting menu (Miika)
+- [ ] Do GAMEUI (game points etc) (Miika)
 
 
 
