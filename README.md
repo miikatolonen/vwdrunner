@@ -15,10 +15,13 @@ Materials
 Game mechanics
 - [ :heavy_check_mark: ] Implement movement (A and D and JUMP) (Jani)
 - [ ] Spawn obstacles (Jani, Ongoing)
+- [ ] Game Ending mechanic
 
-PeliLogiikka
+Game logic
 - [ ] Endgame logic (Unreserved)
 - [ ] Game conditions (How fast game is going, how many obstacles are spawning) (Unreserved)
+- [ ] Restrict gaming space, now the moving area is the whole screen ()
+
 UI
 - [ ] Do Starting menu (Unreserved)
 - [ ] Do GAMEUI (game points etc) (Unreserved)
