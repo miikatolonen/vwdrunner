@@ -182,8 +182,8 @@ function procGenerateRocks() {
 
     var spawnNum = Math.round(Math.random() * 10 * game.spawnRate);
     //var spawnedObs;
-    for (var i = 0; i < 1; i++) {
-      spawnedObs = obstacleTypes[0];
+    for (var i = 0; i < obstacleTypes.length; i++) {
+      spawnedObs = obstacleTypes[i];
       //Direction, lanes
       spawnedObs.position.x = 20;
       //From how long obs starts to respawn
@@ -200,6 +200,8 @@ function procGenerateRocks() {
       scene.add(spawnedObs);
       obstacles.push(spawnedObs);
     }
+
+    obstacleTypes = []
 
     // spawnNum = Math.round(Math.random() * 3 * game.spawnRate);
     // for (var i = 0; i < spawnNum; i++) {
@@ -223,10 +225,12 @@ function moveObstacles() {
             }
       */
   for (var i = 0; i < obstacles.length; i++) {
-    obstacles[i].position.z -= 2 * game.speed;
+    obstacles[i].position.z -= 5 * game.speed;
 
     if (obstacles[i].position.z < 0) {
       //console.log(obstacles[i].position.z)
+      //Load new obstacles when old disappear
+      loadObstacleTypes()
       scene.remove(obstacles[i]);
       obstacles.pop(i);
     }
