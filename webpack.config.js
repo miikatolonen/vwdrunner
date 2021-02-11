@@ -14,7 +14,7 @@ module.exports = {
   }, 
   module:{
     rules:[
-      { test: /\.(png|jpe?g|gif|bin|fbx|glb|gltf)$/i, use: [{ loader: 'file-loader'}]},
+      { test: /\.(png|jpe?g|gif|bin|fbx|glb|gltf|mtl)$/i, use: [{ loader: 'file-loader'}]},
     ]
   },
 };

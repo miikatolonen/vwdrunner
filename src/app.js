@@ -1,6 +1,9 @@
 //Modules
 import { GLTFLoader } from "./modules/GLTFLoader";
 import * as THREE from "./modules/three.module";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+
+import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 
 //Jump function
 import { jump } from "./scripts/Movement/characterMovement.js";
@@ -18,6 +21,22 @@ const state = {
 //Position of Character, 0 -> middle of the screen
 let position = 0;
 
+var game = {
+  finished: false,
+  points: 0,
+  speed: 0.1,
+  spawnRate: 1,
+  input: { left: false, right: false },
+};
+
+var newTime = new Date().getTime();
+var oldTime = new Date().getTime();
+
+// Arrays to hold model objects
+var obstacleTypes = [];
+var obstacles = [];
+var coins = [];
+
 init();
 animate();
 
@@ -28,8 +47,8 @@ function init() {
   camera = new THREE.PerspectiveCamera(
     40,
     window.innerWidth / window.innerHeight,
-    0.25,
-    100
+    1,
+    5000
   );
   //camera.position.set( 5, 50, - 20  );
   camera.position.set(0, 8, -2);
@@ -42,7 +61,7 @@ function init() {
 
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xe0e0e0);
-  scene.fog = new THREE.Fog(0xe0e0e0, 20, 100);
+  //scene.fog = new THREE.Fog(0xe0e0e0, 20, 100);
 
   clock = new THREE.Clock();
 
@@ -55,6 +74,9 @@ function init() {
   const dirLight = new THREE.DirectionalLight(0xffffff);
   dirLight.position.set(0, 20, 10);
   scene.add(dirLight);
+
+  //Loading Obstacles
+  loadObstacleTypes();
 
   //background IMAGE
   /*
@@ -136,6 +158,81 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+function loadObstacleTypes() {
+  var objLoader = new OBJLoader();
+  var mtlLoader = new MTLLoader();
+  objLoader.setPath("src/models/");
+  mtlLoader.setPath("src/models/");
+
+  mtlLoader.load("generator.mtl", function (materials) {
+    materials.preload();
+    objLoader.setMaterials(materials);
+    objLoader.load("generator.obj", function (object) {
+      obstacleTypes.push(object);
+    });
+  });
+}
+
+//Generate ROCKS
+function procGenerateRocks() {
+  newTime = new Date().getTime();
+  let spawnedObs;
+  if (newTime - oldTime > 2000) {
+    oldTime = new Date().getTime();
+
+    var spawnNum = Math.round(Math.random() * 10 * game.spawnRate);
+    //var spawnedObs;
+    for (var i = 0; i < 1; i++) {
+      spawnedObs = obstacleTypes[0];
+      //Direction, lanes
+      spawnedObs.position.x = 20;
+      //From how long obs starts to respawn
+      spawnedObs.position.z = 400;
+      spawnedObs.scale.set(1, 1, 1);
+      //spawnedObs.scale.set(1, 1, 1);
+      /* const square = new Barrier(
+              spawnedObs,
+              spawnedObs.position.x,
+              spawnedObs.position.z
+            );
+            */
+      //console.log(spawnedObs);
+      scene.add(spawnedObs);
+      obstacles.push(spawnedObs);
+    }
+
+    // spawnNum = Math.round(Math.random() * 3 * game.spawnRate);
+    // for (var i = 0; i < spawnNum; i++) {
+    //   spawnedObs = new Coin();
+    //   spawnedObs.mesh.position.x = -10 + Math.random() * 20;
+    //   spawnedObs.mesh.position.z = -20 - Math.random() * 10;
+    //   spawnedObs.mesh.position.y = 0.3;
+    //   spawnedObs.mesh.scale.set(0.05, 0.05, 0.05);
+    //   //coins.push(spawnedObs);
+    //   scene.add(spawnedObs.mesh);
+    //}
+  }
+}
+
+function moveObstacles() {
+  /*
+              if (obstacles.length > 0) {
+              while (obstacles[0].position.z > 0) {
+                obstacles[0].position.z = obstacles[0].position.z - 0.05
+              }
+            }
+      */
+  for (var i = 0; i < obstacles.length; i++) {
+    obstacles[i].position.z -= 2 * game.speed;
+
+    if (obstacles[i].position.z < 0) {
+      //console.log(obstacles[i].position.z)
+      scene.remove(obstacles[i]);
+      obstacles.pop(i);
+    }
+  }
+}
+
 //
 
 function animate() {
@@ -143,8 +240,10 @@ function animate() {
 
   if (mixer) mixer.update(dt);
   updatePlayer();
+  procGenerateRocks();
+  moveObstacles();
   requestAnimationFrame(animate);
-
+  game.speed += 0.0001;
   renderer.render(scene, camera);
 }
 
