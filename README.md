@@ -13,13 +13,13 @@ Materials
 - [ ] Background image (Miika)
 
 Game mechanics
-- [ :heavy_check_mark: ] Implement movement (A and D and JUMP) (Jani)
-- [ ] Spawn obstacles (Jani, Ongoing)
-- [ ] Game Ending mechanic
+- [ :heavy_check_mark: ] Implement movement (A and D and JUMP) (Jani, Miika)
+- [ ] Spawn obstacles ()
+- [ ] Game Ending mechanic ()
 
 Game logic
 - [ ] Endgame logic (Miika)
-- [ ] Game conditions (How fast game is going, how many obstacles are spawning) (Unreserved)
+- [ ] Game conditions (How fast game is going, how many obstacles are spawning) ()
 - [ ] Restrict gaming space, now the moving area is the whole screen ()
 
 UI
