@@ -1,7 +1,7 @@
 //For the jump
-let isJumping = false;
 let isGoingRight = false;
 let isGoingLeft = false;
+let isJumping = false;
 let bottom = 0;
 let gravity = 0.9;
 let left = 0;
@@ -34,13 +34,13 @@ export function jump(model, position, currentAction, activeAction) {
             bottom = bottom * gravity;
             model.position.set(position, bottom, 0);
           }
-        }, 20);
+        }, 10);
       }
       //jump up
       isJumping = true;
       bottom += 1.75;
       bottom = bottom * gravity;
       model.position.set(position, bottom, 0);
-    }, 20);
+    }, 10);
   }
 

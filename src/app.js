@@ -16,6 +16,7 @@ let camera, scene, renderer, model, face;
 const state = {
   moveLeft: false,
   moveRight: false,
+  isJumping: false,
 };
 
 //Position of Character, 0 -> middle of the screen
@@ -41,7 +42,7 @@ init();
 animate();
 
 function init() {
-  container = document.createElement("div");
+  container = document.getElementById("demo");
   document.body.appendChild(container);
 
   camera = new THREE.PerspectiveCamera(
@@ -76,7 +77,7 @@ function init() {
   scene.add(dirLight);
 
   //Loading Obstacles
-  loadObstacleTypes();
+  loadObstacleTypes(1);
 
   //background IMAGE
   /*
@@ -158,19 +159,21 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function loadObstacleTypes() {
+function loadObstacleTypes(amount) {
   var objLoader = new OBJLoader();
   var mtlLoader = new MTLLoader();
   objLoader.setPath("src/models/");
   mtlLoader.setPath("src/models/");
 
-  mtlLoader.load("generator.mtl", function (materials) {
-    materials.preload();
-    objLoader.setMaterials(materials);
-    objLoader.load("generator.obj", function (object) {
-      obstacleTypes.push(object);
+  for (let i = 0; i < amount; i++) {
+    mtlLoader.load("generator.mtl", function (materials) {
+      materials.preload();
+      objLoader.setMaterials(materials);
+      objLoader.load("generator.obj", function (object) {
+        obstacleTypes.push(object);
+      });
     });
-  });
+  }
 }
 
 //Generate ROCKS
@@ -180,28 +183,20 @@ function procGenerateRocks() {
   if (newTime - oldTime > 2000) {
     oldTime = new Date().getTime();
 
-    var spawnNum = Math.round(Math.random() * 10 * game.spawnRate);
+    //var spawnNum = Math.round(Math.random() * 10 * game.spawnRate);
     //var spawnedObs;
     for (var i = 0; i < obstacleTypes.length; i++) {
       spawnedObs = obstacleTypes[i];
       //Direction, lanes
-      spawnedObs.position.x = 20;
+      spawnedObs.position.x = -5; //20 + Math.random() * 30;
       //From how long obs starts to respawn
       spawnedObs.position.z = 400;
       spawnedObs.scale.set(1, 1, 1);
-      //spawnedObs.scale.set(1, 1, 1);
-      /* const square = new Barrier(
-              spawnedObs,
-              spawnedObs.position.x,
-              spawnedObs.position.z
-            );
-            */
-      //console.log(spawnedObs);
       scene.add(spawnedObs);
       obstacles.push(spawnedObs);
     }
 
-    obstacleTypes = []
+    obstacleTypes = [];
 
     // spawnNum = Math.round(Math.random() * 3 * game.spawnRate);
     // for (var i = 0; i < spawnNum; i++) {
@@ -225,18 +220,33 @@ function moveObstacles() {
             }
       */
   for (var i = 0; i < obstacles.length; i++) {
-    obstacles[i].position.z -= 5 * game.speed;
+    obstacles[i].position.z -= 20 * game.speed;
 
-    if (obstacles[i].position.z < 0) {
+    if (obstacles[i].position.z < -10) {
       //console.log(obstacles[i].position.z)
       //Load new obstacles when old disappear
-      loadObstacleTypes()
+
       scene.remove(obstacles[i]);
       obstacles.pop(i);
+      //loadObstacleTypes(3)
     }
   }
 }
+//Math.round(number * 10) / 10
 
+function detectCollision() {
+  for (var i = 0; i < obstacles.length; i++) {
+    if (
+      Math.round(obstacles[i].position.x * 10) / 10 + 2 >=
+        Math.round(position * 10) / 10 &&
+      Math.round(obstacles[i].position.x * 10) / 10 - 2 <=
+        Math.round(position * 10) / 10 &&
+      obstacles[i].position.z <= 2
+    ) {
+      alert("Game over");
+    }
+  }
+}
 //
 
 function animate() {
@@ -246,6 +256,7 @@ function animate() {
   updatePlayer();
   procGenerateRocks();
   moveObstacles();
+  detectCollision();
   requestAnimationFrame(animate);
   game.speed += 0.0001;
   renderer.render(scene, camera);
@@ -256,6 +267,8 @@ document.addEventListener("keydown", onDocumentKeyDown, false);
 function onDocumentKeyDown(event) {
   var keyCode = event.which;
 
+
+  if (model.position.y != 0) return;
   //Right 65 = A & 37 = <-
   if (keyCode == 65 || keyCode == 37) {
     state.moveLeft = true;
@@ -266,10 +279,13 @@ function onDocumentKeyDown(event) {
   }
   //Jump
   else if (keyCode == 87 || keyCode == 32 || keyCode == 38) {
+    state.isJumping = true;
+    state.moveLeft = false;
+    state.moveRight = false;
     //Stop the running Animation
     activeAction.stop();
     //Activate Jump Animation
-    fadeToAction(0.5);
+    fadeToAction(0.01);
     //Jump logic
     jump(model, position, currentAction, activeAction);
   }
@@ -286,10 +302,10 @@ document.addEventListener("keyup", function (event) {
 });
 
 function updatePlayer() {
-  if (state.moveLeft && position <= 15) {
+  if (state.moveLeft && position <= 7) {
     position += 0.2;
     model.position.set(position, 0, 0);
-  } else if (state.moveRight && position >= -15) {
+  } else if (state.moveRight && position >= -7) {
     position -= 0.2;
     model.position.set(position, 0, 0);
   }
