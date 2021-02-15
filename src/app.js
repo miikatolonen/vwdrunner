@@ -165,7 +165,7 @@ function loadObstacleTypes(amount) {
   objLoader.setPath("src/models/");
   mtlLoader.setPath("src/models/");
 
-  for (let i = 0; i < amount; i++) {
+  //for (let i = 0; i < amount; i++) {
     mtlLoader.load("generator.mtl", function (materials) {
       materials.preload();
       objLoader.setMaterials(materials);
@@ -173,7 +173,7 @@ function loadObstacleTypes(amount) {
         obstacleTypes.push(object);
       });
     });
-  }
+  //}
 }
 
 //Generate ROCKS
@@ -228,7 +228,7 @@ function moveObstacles() {
 
       scene.remove(obstacles[i]);
       obstacles.pop(i);
-      //loadObstacleTypes(3)
+      loadObstacleTypes()
     }
   }
 }
@@ -266,7 +266,6 @@ function animate() {
 document.addEventListener("keydown", onDocumentKeyDown, false);
 function onDocumentKeyDown(event) {
   var keyCode = event.which;
-
 
   if (model.position.y != 0) return;
   //Right 65 = A & 37 = <-
