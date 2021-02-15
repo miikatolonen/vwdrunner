@@ -11,8 +11,7 @@ import { jump } from "./scripts/Movement/characterMovement.js";
 
 //Game variables
 let container, clock, mixer, activeAction, previousAction, currentAction;
-let camera, scene, renderer, model, face, pointHud;
-
+let camera, scene, renderer, model, face, pointHud, gameStart, gameStop;
 //Game state
 const state = {
   moveLeft: false,
@@ -40,7 +39,6 @@ var coins = [];
 
 init();
 animate();
-var pointCounter = setInterval(updateHUD, 1000);
 
 function init() {
   container = document.getElementById("demo");
@@ -90,6 +88,18 @@ pointHud.style.fontSize = "80px"
 pointHud.style.top = "10%";
 pointHud.style.left = "80%";
 document.body.appendChild(pointHud);
+
+
+gameStop = document.createElement('div')
+gameStop.style.position = 'absolute'
+gameStop.style.width = 2000
+gameStop.style.height = 2000
+gameStop.style.fontSize = "50px"
+gameStop.style.textAlign = "center"
+gameStop.style.backgroundColor = "white"
+gameStop.classList.add("overlay")
+
+
 
   //background IMAGE
   /*
@@ -190,6 +200,7 @@ function loadObstacleTypes(amount) {
 
 //Generate ROCKS
 function procGenerateRocks() {
+
   newTime = new Date().getTime();
   let spawnedObs;
   if (newTime - oldTime > 2000) {
@@ -207,7 +218,6 @@ function procGenerateRocks() {
       scene.add(spawnedObs);
       obstacles.push(spawnedObs);
     }
-
     obstacleTypes = [];
 
     // spawnNum = Math.round(Math.random() * 3 * game.spawnRate);
@@ -255,15 +265,30 @@ function detectCollision() {
         Math.round(position * 10) / 10 &&
       obstacles[i].position.z <= 2
     ) {
-      alert("Game over");
+      EndGame()
     }
   }
 }
+
+function EndGame() {
+  game.finished = true;
+
+  while (scene.children.length > 0){
+    scene.remove(scene.children[0])
+  }
+  
+  gameStop.innerHTML = "Game over! You got " + game.points + " points"
+  document.body.appendChild(gameStop)
+
+}
+
+
 //
 
 function animate() {
-  const dt = clock.getDelta();
 
+  if(!game.finished){
+  const dt = clock.getDelta();
   if (mixer) mixer.update(dt);
   updatePlayer();
   procGenerateRocks();
@@ -273,6 +298,7 @@ function animate() {
   requestAnimationFrame(animate);
   game.speed += 0.0001;
   renderer.render(scene, camera);
+  }
 }
 
 //MovementListener 65 -> (A), 68 -> (D), 37 -> (->), 39 -> (<-)
