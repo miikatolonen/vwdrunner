@@ -8,9 +8,10 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 //Jump function
 import { jump } from "./scripts/Movement/characterMovement.js";
 
+
 //Game variables
 let container, clock, mixer, activeAction, previousAction, currentAction;
-let camera, scene, renderer, model, face;
+let camera, scene, renderer, model, face, pointHud;
 
 //Game state
 const state = {
@@ -27,7 +28,6 @@ var game = {
   points: 0,
   speed: 0.1,
   spawnRate: 1,
-  input: { left: false, right: false },
 };
 
 var newTime = new Date().getTime();
@@ -40,6 +40,7 @@ var coins = [];
 
 init();
 animate();
+var pointCounter = setInterval(updateHUD, 1000);
 
 function init() {
   container = document.getElementById("demo");
@@ -78,6 +79,17 @@ function init() {
 
   //Loading Obstacles
   loadObstacleTypes(1);
+
+pointHud = document.createElement('div');
+pointHud.style.position = 'absolute';
+//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+pointHud.style.width = 400;
+pointHud.style.height = 400;
+pointHud.innerHTML = "0";
+pointHud.style.fontSize = "80px"
+pointHud.style.top = "10%";
+pointHud.style.left = "80%";
+document.body.appendChild(pointHud);
 
   //background IMAGE
   /*
@@ -257,6 +269,7 @@ function animate() {
   procGenerateRocks();
   moveObstacles();
   detectCollision();
+  updateHUD()
   requestAnimationFrame(animate);
   game.speed += 0.0001;
   renderer.render(scene, camera);
@@ -308,4 +321,10 @@ function updatePlayer() {
     position -= 0.2;
     model.position.set(position, 0, 0);
   }
+}
+
+
+function updateHUD(){
+      game.points += 1;
+      pointHud.innerHTML = game.points;
 }
