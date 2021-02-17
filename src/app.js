@@ -8,10 +8,39 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 //Jump function
 import { jump } from "./scripts/Movement/characterMovement.js";
 
+class ResourceTracker {
+  constructor() {
+    this.resources = new Set();
+  }
+  track(resource) {
+    if (resource.dispose || resource instanceof THREE.Object3D) {
+      this.resources.add(resource);
+    }
+    return resource;
+  }
+  untrack(resource) {
+    this.resources.delete(resource);
+  }
+  dispose() {
+    for (const resource of this.resources) {
+      if (resource instanceof THREE.Object3D) {
+        if (resource.parent) {
+          resource.parent.remove(resource);
+        }
+      }
+      if (resource.dispose) {
+        resource.dispose();
+      }
+    }
+    this.resources.clear();
+  }
+}
 
 //Game variables
 let container, clock, mixer, activeAction, previousAction, currentAction;
-let camera, scene, renderer, model, face, pointHud, gameStart, gameStop;
+let camera, scene, renderer, model, face, pointHud, gameStart, gameStop, playBtn;
+let resTracker, track; 
+
 //Game state
 const state = {
   moveLeft: false,
@@ -41,6 +70,7 @@ init();
 animate();
 
 function init() {
+
   container = document.getElementById("demo");
   document.body.appendChild(container);
 
@@ -90,15 +120,25 @@ pointHud.style.left = "80%";
 document.body.appendChild(pointHud);
 
 
-gameStop = document.createElement('div')
-gameStop.style.position = 'absolute'
-gameStop.style.width = 2000
-gameStop.style.height = 2000
-gameStop.style.fontSize = "50px"
-gameStop.style.textAlign = "center"
-gameStop.style.backgroundColor = "white"
-gameStop.classList.add("overlay")
-
+gameStop = document.createElement('div');
+gameStop.style.position = 'absolute';
+gameStop.style.width = 2000;
+gameStop.style.height = 2000;
+gameStop.style.fontSize = "50px";
+gameStop.style.textAlign = "center";
+gameStop.style.backgroundColor = "white";
+gameStop.classList.add("overlay");
+playBtn = document.createElement("BUTTON");
+playBtn.style.width = 200;
+playBtn.style.height = 100;
+playBtn.style.fontSize = "20px";
+playBtn.style.top = "50%";
+playBtn.style.left = "50%"
+playBtn.classList.add("playBtn");
+playBtn.addEventListener('click', function(){
+  restartGame()
+})
+playBtn.innerHTML = "Play Again";
 
 
   //background IMAGE
@@ -279,17 +319,21 @@ function EndGame() {
   while (scene.children.length > 0){
     scene.remove(scene.children[0])
   }
-  
-  gameStop.innerHTML = "Game over! You got " + game.points + " points"
-  document.body.appendChild(gameStop)
-
+  gameStop.innerHTML = "Game over! You got " + game.points + " points";
+  gameStop.appendChild(playBtn)
+  document.body.appendChild(gameStop);
 }
 
+function restartGame(){
+var elemDel = document.getElementById("demo")
+container, clock, mixer, activeAction, previousAction, currentAction = null;
+camera, scene, renderer, model, face, pointHud, gameStart, gameStop, playBtn = null;
+init()
+}
 
 //
 
 function animate() {
-
   if(!game.finished){
   const dt = clock.getDelta();
   if (mixer) mixer.update(dt);
