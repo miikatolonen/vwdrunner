@@ -203,6 +203,8 @@ function procGenerateRocks() {
 
   newTime = new Date().getTime();
   let spawnedObs;
+  let spawnedObsLocation = [-15,0,15]; //Three lines where obstacles can be spawned
+  var randomLocation = spawnedObsLocation[Math.floor(Math.random()*spawnedObsLocation.length)]; //obstacle location 
   if (newTime - oldTime > 2000) {
     oldTime = new Date().getTime();
 
@@ -211,7 +213,8 @@ function procGenerateRocks() {
     for (var i = 0; i < obstacleTypes.length; i++) {
       spawnedObs = obstacleTypes[i];
       //Direction, lanes
-      spawnedObs.position.x = -5; //20 + Math.random() * 30;
+      //spawnedObs.position.x = -5; //20 + Math.random() * 30;
+      spawnedObs.position.x = randomLocation;
       //From how long obs starts to respawn
       spawnedObs.position.z = 400;
       spawnedObs.scale.set(1, 1, 1);
@@ -339,14 +342,40 @@ document.addEventListener("keyup", function (event) {
   }
 });
 
-function updatePlayer() {
-  if (state.moveLeft && position <= 7) {
+/*function updatePlayer() {
+  if (state.moveLeft && position <= 10) {
     position += 0.2;
     model.position.set(position, 0, 0);
-  } else if (state.moveRight && position >= -7) {
+  } else if (state.moveRight && position >= -10) {
     position -= 0.2;
     model.position.set(position, 0, 0);
   }
+}*/
+
+function updatePlayer() {
+  if (state.moveLeft && position < 0) {
+    position = 0;
+    setPosition(position);
+  } 
+  else if (state.moveLeft && position >= 0) {
+    position = 15;
+    setPosition(position);
+  }
+  else if (state.moveRight && position > 0) {
+    position = 0;
+    setPosition(position);
+  }
+  else if (state.moveRight && position <= 0) {
+    position = -15;
+    setPosition(position);
+  }
+}
+
+function setPosition(position)
+{
+  model.position.set(position, 0, 0);
+  state.moveLeft=false;
+  state.moveRight=false;
 }
 
 
