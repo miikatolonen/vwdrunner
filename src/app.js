@@ -8,9 +8,38 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 //Jump function
 import { jump } from "./scripts/Movement/characterMovement.js";
 
+class ResourceTracker {
+  constructor() {
+    this.resources = new Set();
+  }
+  track(resource) {
+    if (resource.dispose || resource instanceof THREE.Object3D) {
+      this.resources.add(resource);
+    }
+    return resource;
+  }
+  untrack(resource) {
+    this.resources.delete(resource);
+  }
+  dispose() {
+    for (const resource of this.resources) {
+      if (resource instanceof THREE.Object3D) {
+        if (resource.parent) {
+          resource.parent.remove(resource);
+        }
+      }
+      if (resource.dispose) {
+        resource.dispose();
+      }
+    }
+    this.resources.clear();
+  }
+}
+
 //Game variables
 let container, clock, mixer, activeAction, previousAction, currentAction;
-let camera, scene, renderer, model, face;
+let camera, scene, renderer, model, face, pointHud, gameStart, gameStop, playBtn;
+let resTracker, track; 
 
 //Game state
 const state = {
@@ -27,7 +56,6 @@ var game = {
   points: 0,
   speed: 0.1,
   spawnRate: 1,
-  input: { left: false, right: false },
 };
 
 var newTime = new Date().getTime();
@@ -42,6 +70,7 @@ init();
 animate();
 
 function init() {
+
   container = document.getElementById("demo");
   document.body.appendChild(container);
 
@@ -78,6 +107,39 @@ function init() {
 
   //Loading Obstacles
   loadObstacleTypes(1);
+
+pointHud = document.createElement('div');
+pointHud.style.position = 'absolute';
+//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+pointHud.style.width = 400;
+pointHud.style.height = 400;
+pointHud.innerHTML = "0";
+pointHud.style.fontSize = "80px"
+pointHud.style.top = "10%";
+pointHud.style.left = "80%";
+document.body.appendChild(pointHud);
+
+
+gameStop = document.createElement('div');
+gameStop.style.position = 'absolute';
+gameStop.style.width = 2000;
+gameStop.style.height = 2000;
+gameStop.style.fontSize = "50px";
+gameStop.style.textAlign = "center";
+gameStop.style.backgroundColor = "white";
+gameStop.classList.add("overlay");
+playBtn = document.createElement("BUTTON");
+playBtn.style.width = 200;
+playBtn.style.height = 100;
+playBtn.style.fontSize = "20px";
+playBtn.style.top = "50%";
+playBtn.style.left = "50%"
+playBtn.classList.add("playBtn");
+playBtn.addEventListener('click', function(){
+  restartGame()
+})
+playBtn.innerHTML = "Play Again";
+
 
   //background IMAGE
   /*
@@ -166,7 +228,7 @@ function loadObstacleTypes(amount) {
   objLoader.setPath("src/models/");
   mtlLoader.setPath("src/models/");
 
-  for (let i = 0; i < amount; i++) {
+  //for (let i = 0; i < amount; i++) {
     mtlLoader.load("generator.mtl", function (materials) {
       materials.preload();
       objLoader.setMaterials(materials);
@@ -174,15 +236,24 @@ function loadObstacleTypes(amount) {
         obstacleTypes.push(object);
       });
     });
-  }
- 
+    mtlLoader.load("PropaneTank.mtl", function (materials) {
+      materials.preload();
+      objLoader.setMaterials(materials);
+      objLoader.load("PropaneTank.obj", function (object) {
+        obstacleTypes.push(object);
+      });
+    });
+  //}
 }
 
 
 //Generate ROCKS
 function procGenerateRocks() {
+
   newTime = new Date().getTime();
   let spawnedObs;
+  let spawnedObsLocation = [-15,0,15]; //Three lines where obstacles can be spawned
+  var randomLocation = spawnedObsLocation[Math.floor(Math.random()*spawnedObsLocation.length)]; //obstacle location 
   if (newTime - oldTime > 2000) {
     oldTime = new Date().getTime();
 
@@ -191,14 +262,14 @@ function procGenerateRocks() {
     for (var i = 0; i < obstacleTypes.length; i++) {
       spawnedObs = obstacleTypes[i];
       //Direction, lanes
-      spawnedObs.position.x = -5; //20 + Math.random() * 30;
+      //spawnedObs.position.x = -5; //20 + Math.random() * 30;
+      spawnedObs.position.x = randomLocation;
       //From how long obs starts to respawn
       spawnedObs.position.z = 400;
       spawnedObs.scale.set(1, 1, 1);
       scene.add(spawnedObs);
       obstacles.push(spawnedObs);
     }
-
     obstacleTypes = [];
 
     // spawnNum = Math.round(Math.random() * 3 * game.spawnRate);
@@ -231,7 +302,7 @@ function moveObstacles() {
 
       scene.remove(obstacles[i]);
       obstacles.pop(i);
-      //loadObstacleTypes(3)
+      loadObstacleTypes()
     }
   }
 }
@@ -246,30 +317,50 @@ function detectCollision() {
         Math.round(position * 10) / 10 &&
       obstacles[i].position.z <= 2
     ) {
-      alert("Game over");
+      EndGame()
     }
   }
 }
+
+function EndGame() {
+  game.finished = true;
+
+  while (scene.children.length > 0){
+    scene.remove(scene.children[0])
+  }
+  gameStop.innerHTML = "Game over! You got " + game.points + " points";
+  gameStop.appendChild(playBtn)
+  document.body.appendChild(gameStop);
+}
+
+function restartGame(){
+var elemDel = document.getElementById("demo")
+container, clock, mixer, activeAction, previousAction, currentAction = null;
+camera, scene, renderer, model, face, pointHud, gameStart, gameStop, playBtn = null;
+init()
+}
+
 //
 
 function animate() {
+  if(!game.finished){
   const dt = clock.getDelta();
-
   if (mixer) mixer.update(dt);
   updatePlayer();
   procGenerateRocks();
   moveObstacles();
   detectCollision();
+  updateHUD()
   requestAnimationFrame(animate);
   game.speed += 0.0001;
   renderer.render(scene, camera);
+  }
 }
 
 //MovementListener 65 -> (A), 68 -> (D), 37 -> (->), 39 -> (<-)
 document.addEventListener("keydown", onDocumentKeyDown, false);
 function onDocumentKeyDown(event) {
   var keyCode = event.which;
-
 
   if (model.position.y != 0) return;
   //Right 65 = A & 37 = <-
@@ -304,12 +395,44 @@ document.addEventListener("keyup", function (event) {
   }
 });
 
-function updatePlayer() {
-  if (state.moveLeft && position <= 7) {
+/*function updatePlayer() {
+  if (state.moveLeft && position <= 10) {
     position += 0.2;
     model.position.set(position, 0, 0);
-  } else if (state.moveRight && position >= -7) {
+  } else if (state.moveRight && position >= -10) {
     position -= 0.2;
     model.position.set(position, 0, 0);
   }
+}*/
+
+function updatePlayer() {
+  if (state.moveLeft && position < 0) {
+    position = 0;
+    setPosition(position);
+  } 
+  else if (state.moveLeft && position >= 0) {
+    position = 15;
+    setPosition(position);
+  }
+  else if (state.moveRight && position > 0) {
+    position = 0;
+    setPosition(position);
+  }
+  else if (state.moveRight && position <= 0) {
+    position = -15;
+    setPosition(position);
+  }
+}
+
+function setPosition(position)
+{
+  model.position.set(position, 0, 0);
+  state.moveLeft=false;
+  state.moveRight=false;
+}
+
+
+function updateHUD(){
+      game.points += 1;
+      pointHud.innerHTML = game.points;
 }
