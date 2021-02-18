@@ -162,7 +162,6 @@ function init() {
 */
   // ground
 
-  
   const mesh = new THREE.Mesh(
     new THREE.PlaneGeometry(2000, 2000),
     new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false })
@@ -248,16 +247,16 @@ function loadObstacleTypes(amount) {
       obstacleTypes.push(object);
     });
   });
+
   mtlLoader.load("PropaneTank.mtl", function (materials) {
-      materials.preload();
-      objLoader.setMaterials(materials);
-      objLoader.load("PropaneTank.obj", function (object) {
-        obstacleTypes.push(object);
-      });
+    materials.preload();
+    objLoader.setMaterials(materials);
+    objLoader.load("PropaneTank.obj", function (object) {
+      obstacleTypes.push(object);
     });
+  });
   //}
 }
-
 
 //Generate ROCKS
 function procGenerateRocks() {
@@ -275,7 +274,10 @@ function procGenerateRocks() {
       spawnedObs = obstacleTypes[i];
       //Direction, lanes
       //spawnedObs.position.x = -5; //20 + Math.random() * 30;
-      spawnedObs.position.x = randomLocation;
+      spawnedObs.position.x =
+        spawnedObsLocation[
+          Math.floor(Math.random() * spawnedObsLocation.length)
+        ];
       //From how long obs starts to respawn
       spawnedObs.position.z = 400;
       spawnedObs.scale.set(1, 1, 1);
@@ -298,16 +300,15 @@ function procGenerateRocks() {
 }
 
 function moveObstacles() {
- 
   for (var i = 0; i < obstacles.length; i++) {
     obstacles[i].position.z -= 20 * game.speed;
 
-    if (obstacles[i].position.z < -10) {
+    if (obstacles[i].position.z < -15) {
       //Load new obstacles when old disappear
 
       scene.remove(obstacles[i]);
       obstacles.pop(i);
-      loadObstacleTypes();
+      loadObstacleTypes(1);
     }
   }
 }
@@ -320,9 +321,11 @@ function detectCollision() {
         Math.round(position * 10) / 10 &&
       Math.round(obstacles[i].position.x * 10) / 10 - 2 <=
         Math.round(position * 10) / 10 &&
-      obstacles[i].position.z <= 2
+      obstacles[i].position.z <= 2 &&
+      model.position.y <= 1 &&
+      model.position.y >= 0
     ) {
-      console.log("GAME OVER");
+      //Game OVER
       EndGame();
     }
   }
@@ -331,7 +334,6 @@ function detectCollision() {
 function cleanObstacles() {
   for (let i = 0; i < obstacles.length; i++) {
     scene.remove(obstacles[i]);
-    obstacles.pop(i);
   }
 }
 

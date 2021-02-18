@@ -34,13 +34,13 @@ export function jump(model, position, currentAction, activeAction) {
             bottom = bottom * gravity;
             model.position.set(position, bottom, 0);
           }
-        }, 10);
+        }, 40);
       }
       //jump up
       isJumping = true;
       bottom += 1.75;
       bottom = bottom * gravity;
       model.position.set(position, bottom, 0);
-    }, 10);
+    }, 40);
   }
 
