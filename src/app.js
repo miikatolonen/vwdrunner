@@ -88,6 +88,7 @@ function init() {
 */
   // ground
 
+  
   const mesh = new THREE.Mesh(
     new THREE.PlaneGeometry(2000, 2000),
     new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false })
@@ -174,7 +175,9 @@ function loadObstacleTypes(amount) {
       });
     });
   }
+ 
 }
+
 
 //Generate ROCKS
 function procGenerateRocks() {
