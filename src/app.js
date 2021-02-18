@@ -38,8 +38,16 @@ class ResourceTracker {
 
 //Game variables
 let container, clock, mixer, activeAction, previousAction, currentAction;
-let camera, scene, renderer, model, face, pointHud, gameStart, gameStop, playBtn;
-let resTracker, track; 
+let camera,
+  scene,
+  renderer,
+  model,
+  face,
+  pointHud,
+  gameStart,
+  gameStop,
+  playBtn;
+let resTracker, track;
 
 //Game state
 const state = {
@@ -70,8 +78,11 @@ init();
 animate();
 
 function init() {
+  //container = document.getElementById("demo");
+  //document.body.appendChild(container);
 
-  container = document.getElementById("demo");
+  container = document.createElement("div");
+  container.id = "game";
   document.body.appendChild(container);
 
   camera = new THREE.PerspectiveCamera(
@@ -108,38 +119,39 @@ function init() {
   //Loading Obstacles
   loadObstacleTypes(1);
 
-pointHud = document.createElement('div');
-pointHud.style.position = 'absolute';
-//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-pointHud.style.width = 400;
-pointHud.style.height = 400;
-pointHud.innerHTML = "0";
-pointHud.style.fontSize = "80px"
-pointHud.style.top = "10%";
-pointHud.style.left = "80%";
-document.body.appendChild(pointHud);
+  pointHud = document.createElement("div");
+  pointHud.id = "pointhud";
+  pointHud.style.position = "absolute";
+  //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+  pointHud.style.width = 400;
+  pointHud.style.height = 400;
+  pointHud.innerHTML = "0";
+  pointHud.style.fontSize = "80px";
+  pointHud.style.top = "10%";
+  pointHud.style.left = "80%";
+  document.body.appendChild(pointHud);
 
-
-gameStop = document.createElement('div');
-gameStop.style.position = 'absolute';
-gameStop.style.width = 2000;
-gameStop.style.height = 2000;
-gameStop.style.fontSize = "50px";
-gameStop.style.textAlign = "center";
-gameStop.style.backgroundColor = "white";
-gameStop.classList.add("overlay");
-playBtn = document.createElement("BUTTON");
-playBtn.style.width = 200;
-playBtn.style.height = 100;
-playBtn.style.fontSize = "20px";
-playBtn.style.top = "50%";
-playBtn.style.left = "50%"
-playBtn.classList.add("playBtn");
-playBtn.addEventListener('click', function(){
-  restartGame()
-})
-playBtn.innerHTML = "Play Again";
-
+  gameStop = document.createElement("div");
+  gameStop.id = "gamestop";
+  gameStop.style.position = "absolute";
+  gameStop.style.width = 2000;
+  gameStop.style.height = 2000;
+  gameStop.style.fontSize = "50px";
+  gameStop.style.textAlign = "center";
+  gameStop.style.backgroundColor = "white";
+  gameStop.classList.add("overlay");
+  playBtn = document.createElement("BUTTON");
+  playBtn.id = "playbtn";
+  playBtn.style.width = 200;
+  playBtn.style.height = 100;
+  playBtn.style.fontSize = "20px";
+  playBtn.style.top = "50%";
+  playBtn.style.left = "50%";
+  playBtn.classList.add("playBtn");
+  playBtn.addEventListener("click", function () {
+    restartGame();
+  });
+  playBtn.innerHTML = "Play Again";
 
   //background IMAGE
   /*
@@ -229,14 +241,14 @@ function loadObstacleTypes(amount) {
   mtlLoader.setPath("src/models/");
 
   //for (let i = 0; i < amount; i++) {
-    mtlLoader.load("generator.mtl", function (materials) {
-      materials.preload();
-      objLoader.setMaterials(materials);
-      objLoader.load("generator.obj", function (object) {
-        obstacleTypes.push(object);
-      });
+  mtlLoader.load("generator.mtl", function (materials) {
+    materials.preload();
+    objLoader.setMaterials(materials);
+    objLoader.load("generator.obj", function (object) {
+      obstacleTypes.push(object);
     });
-    mtlLoader.load("PropaneTank.mtl", function (materials) {
+  });
+  mtlLoader.load("PropaneTank.mtl", function (materials) {
       materials.preload();
       objLoader.setMaterials(materials);
       objLoader.load("PropaneTank.obj", function (object) {
@@ -249,11 +261,11 @@ function loadObstacleTypes(amount) {
 
 //Generate ROCKS
 function procGenerateRocks() {
-
   newTime = new Date().getTime();
   let spawnedObs;
-  let spawnedObsLocation = [-15,0,15]; //Three lines where obstacles can be spawned
-  var randomLocation = spawnedObsLocation[Math.floor(Math.random()*spawnedObsLocation.length)]; //obstacle location 
+  let spawnedObsLocation = [-15, 0, 15]; //Three lines where obstacles can be spawned
+  var randomLocation =
+    spawnedObsLocation[Math.floor(Math.random() * spawnedObsLocation.length)]; //obstacle location
   if (newTime - oldTime > 2000) {
     oldTime = new Date().getTime();
 
@@ -286,23 +298,16 @@ function procGenerateRocks() {
 }
 
 function moveObstacles() {
-  /*
-              if (obstacles.length > 0) {
-              while (obstacles[0].position.z > 0) {
-                obstacles[0].position.z = obstacles[0].position.z - 0.05
-              }
-            }
-      */
+ 
   for (var i = 0; i < obstacles.length; i++) {
     obstacles[i].position.z -= 20 * game.speed;
 
     if (obstacles[i].position.z < -10) {
-      //console.log(obstacles[i].position.z)
       //Load new obstacles when old disappear
 
       scene.remove(obstacles[i]);
       obstacles.pop(i);
-      loadObstacleTypes()
+      loadObstacleTypes();
     }
   }
 }
@@ -317,43 +322,60 @@ function detectCollision() {
         Math.round(position * 10) / 10 &&
       obstacles[i].position.z <= 2
     ) {
-      EndGame()
+      console.log("GAME OVER");
+      EndGame();
     }
+  }
+}
+
+function cleanObstacles() {
+  for (let i = 0; i < obstacles.length; i++) {
+    scene.remove(obstacles[i]);
+    obstacles.pop(i);
   }
 }
 
 function EndGame() {
   game.finished = true;
 
-  while (scene.children.length > 0){
-    scene.remove(scene.children[0])
+  /*
+  while (scene.children.length > 0) {
+    scene.remove(scene.children[0]);
   }
+  */
+  document.getElementById("game").style.display = "none";
   gameStop.innerHTML = "Game over! You got " + game.points + " points";
-  gameStop.appendChild(playBtn)
+  gameStop.appendChild(playBtn);
   document.body.appendChild(gameStop);
+  document.getElementById("gamestop").style.display = "block";
 }
 
-function restartGame(){
-var elemDel = document.getElementById("demo")
-container, clock, mixer, activeAction, previousAction, currentAction = null;
-camera, scene, renderer, model, face, pointHud, gameStart, gameStop, playBtn = null;
-init()
+function restartGame() {
+  document.getElementById("game").style.display = "block";
+  document.getElementById("gamestop").style.display = "none";
+  cleanObstacles();
+  position = 0;
+  obstacles = [];
+  obstacleTypes = [];
+  model.position.set(position, 0, 0);
+  game.points = 0;
+  game.finished = false;
+  loadObstacleTypes(1);
+  animate();
 }
-
-//
 
 function animate() {
-  if(!game.finished){
-  const dt = clock.getDelta();
-  if (mixer) mixer.update(dt);
-  updatePlayer();
-  procGenerateRocks();
-  moveObstacles();
-  detectCollision();
-  updateHUD()
-  requestAnimationFrame(animate);
-  game.speed += 0.0001;
-  renderer.render(scene, camera);
+  if (!game.finished) {
+    const dt = clock.getDelta();
+    if (mixer) mixer.update(dt);
+    updatePlayer();
+    procGenerateRocks();
+    moveObstacles();
+    detectCollision();
+    updateHUD();
+    requestAnimationFrame(animate);
+    game.speed += 0.0001;
+    renderer.render(scene, camera);
   }
 }
 
@@ -409,30 +431,25 @@ function updatePlayer() {
   if (state.moveLeft && position < 0) {
     position = 0;
     setPosition(position);
-  } 
-  else if (state.moveLeft && position >= 0) {
+  } else if (state.moveLeft && position >= 0) {
     position = 15;
     setPosition(position);
-  }
-  else if (state.moveRight && position > 0) {
+  } else if (state.moveRight && position > 0) {
     position = 0;
     setPosition(position);
-  }
-  else if (state.moveRight && position <= 0) {
+  } else if (state.moveRight && position <= 0) {
     position = -15;
     setPosition(position);
   }
 }
 
-function setPosition(position)
-{
+function setPosition(position) {
   model.position.set(position, 0, 0);
-  state.moveLeft=false;
-  state.moveRight=false;
+  state.moveLeft = false;
+  state.moveRight = false;
 }
 
-
-function updateHUD(){
-      game.points += 1;
-      pointHud.innerHTML = game.points;
+function updateHUD() {
+  game.points += 1;
+  pointHud.innerHTML = game.points;
 }
