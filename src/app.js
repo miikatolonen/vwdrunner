@@ -259,10 +259,12 @@ function loadObstacleTypes() {
     objLoader.setMaterials(materials);
     objLoader.load("PropaneTank.obj", function (object) {
       object.position.x = -15
+      object.position.z = 400
       obstacleTypes.push(object);
     });
     objLoader.load("PropaneTank.obj", function (object) {
       object.position.x = 0
+      object.position.z = 350
       obstacleTypes.push(object);
     });
   });
@@ -305,7 +307,7 @@ function procGenerateRocks() {
         ];
         */
       //From how long obs starts to respawn
-      spawnedObs.position.z = 400;
+      //spawnedObs.position.z = 400;
       spawnedObs.scale.set(1, 1, 1);
       scene.add(spawnedObs);
       obstacles.push(spawnedObs);
@@ -333,10 +335,9 @@ function moveObstacles() {
     if (obstacles[i].position.z < -20) {
       //Load new obstacles when old disappear
       scene.remove(obstacles[i]);
-      obstacles.pop(i);
+      //obstacles.pop(i);
       if (obstacleTypes.length < 3 && obstacles.length < 3) {
-        obstacles = []
-        obstacleTypes = [];
+        obstacles.pop(i);
         loadObstacleTypes();
       } 
      
