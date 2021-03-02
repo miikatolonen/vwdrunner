@@ -117,7 +117,7 @@ function init() {
   scene.add(dirLight);
 
   //Loading Obstacles
-  loadObstacleTypes(1);
+  loadObstacleTypes();
 
   pointHud = document.createElement("div");
   pointHud.id = "pointhud";
@@ -233,12 +233,13 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function loadObstacleTypes(amount) {
+function loadObstacleTypes() {
   var objLoader = new OBJLoader();
   var mtlLoader = new MTLLoader();
   objLoader.setPath("src/models/");
   mtlLoader.setPath("src/models/");
 
+  /*
   //for (let i = 0; i < amount; i++) {
   mtlLoader.load("generator.mtl", function (materials) {
     materials.preload();
@@ -247,15 +248,37 @@ function loadObstacleTypes(amount) {
       obstacleTypes.push(object);
     });
   });
+  */
+
+  obstacleTypes = []
+  
+  console.log(obstacleTypes)
 
   mtlLoader.load("PropaneTank.mtl", function (materials) {
+    materials.preload();
+    objLoader.setMaterials(materials);
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0
+      obstacleTypes.push(object);
+    });
+  });
+
+ 
+
+  /*
+   mtlLoader.load("PropaneTank.mtl", function (materials) {
     materials.preload();
     objLoader.setMaterials(materials);
     objLoader.load("PropaneTank.obj", function (object) {
       obstacleTypes.push(object);
     });
   });
-  //}
+  */
+  
 }
 
 //Generate ROCKS
@@ -270,14 +293,17 @@ function procGenerateRocks() {
 
     //var spawnNum = Math.round(Math.random() * 10 * game.spawnRate);
     //var spawnedObs;
+    console.log(obstacleTypes.length)
     for (var i = 0; i < obstacleTypes.length; i++) {
       spawnedObs = obstacleTypes[i];
       //Direction, lanes
       //spawnedObs.position.x = -5; //20 + Math.random() * 30;
+      /*
       spawnedObs.position.x =
         spawnedObsLocation[
           Math.floor(Math.random() * spawnedObsLocation.length)
         ];
+        */
       //From how long obs starts to respawn
       spawnedObs.position.z = 400;
       spawnedObs.scale.set(1, 1, 1);
@@ -300,15 +326,20 @@ function procGenerateRocks() {
 }
 
 function moveObstacles() {
+
   for (var i = 0; i < obstacles.length; i++) {
     obstacles[i].position.z -= 20 * game.speed;
 
-    if (obstacles[i].position.z < -15) {
+    if (obstacles[i].position.z < -20) {
       //Load new obstacles when old disappear
-
       scene.remove(obstacles[i]);
       obstacles.pop(i);
-      loadObstacleTypes(1);
+      if (obstacleTypes.length < 3 && obstacles.length < 3) {
+        obstacles = []
+        obstacleTypes = [];
+        loadObstacleTypes();
+      } 
+     
     }
   }
 }
@@ -362,7 +393,7 @@ function restartGame() {
   model.position.set(position, 0, 0);
   game.points = 0;
   game.finished = false;
-  loadObstacleTypes(1);
+  loadObstacleTypes();
   animate();
 }
 
