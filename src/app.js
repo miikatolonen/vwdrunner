@@ -420,7 +420,9 @@ function detectCollision() {
       obstacles[i].position.z <= 2 &&
       obstacles[i].position.z > 0 &&
       model.position.y <= 1 &&
-      model.position.y >= 0
+      model.position.y >= 0 &&
+        Math.round(model.position.x * 10) / 10 &&
+      obstacles[i].position.z <= 2
     ) {
       //For line 1 which is left, for some reason camera z-axis isnt same way on the other
       if (obstacles[i].position.x == 15 && obstacles[i].position.z <= 1.2 && obstacles[i].position.z >= 0.2 ) {
@@ -536,26 +538,66 @@ document.addEventListener("keyup", function (event) {
 function updatePlayer() {
   if (state.moveLeft && position < 0) {
     position = 0;
-    setPosition(position);
-  } else if (state.moveLeft && position >= 0) {
+    smoothMoveToLeft(position);
+    moveLeftAndRightToFalse();
+  } 
+  else if (state.moveLeft && position >= 0) {
     position = 15;
-    setPosition(position);
-  } else if (state.moveRight && position > 0) {
+    smoothMoveToLeft(position);
+    moveLeftAndRightToFalse();
+  }
+  else if (state.moveRight && position > 0) {
     position = 0;
-    setPosition(position);
-  } else if (state.moveRight && position <= 0) {
+    smoothMoveToRight(position);
+    moveLeftAndRightToFalse();
+  }
+  else if (state.moveRight && position <= 0) {
     position = -15;
-    setPosition(position);
+    smoothMoveToRight(position);
+    moveLeftAndRightToFalse();
   }
 }
 
 function setPosition(position) {
   model.position.set(position, 0, 0);
-  state.moveLeft = false;
-  state.moveRight = false;
+}
+function moveLeftAndRightToFalse(){
+  state.moveLeft=false;
+  state.moveRight=false;
 }
 
 function updateHUD() {
   game.points += 1;
   pointHud.innerHTML = game.points;
+}
+
+//-------------------------------------
+// Smoother movements for the robot
+//-------------------------------------
+function smoothMoveToLeft(targetPositionX){
+  targetPositionX=position;
+  renderer.render(scene, camera);
+
+  if (model.position.x < targetPositionX) {
+    model.position.x += 0.3;
+    requestAnimationFrame(smoothMoveToLeft);
+  }
+  if(model.position.x > targetPositionX && model.position.x < targetPositionX+0.5){
+    model.position.x = targetPositionX;
+    setPosition(model.position.x);
+  }
+}
+
+function smoothMoveToRight(targetPositionX){
+  targetPositionX=position;
+  renderer.render(scene, camera);
+  
+  if (model.position.x > targetPositionX) {
+      model.position.x -= 0.3;
+      requestAnimationFrame(smoothMoveToRight);
+  }
+  if(model.position.x < targetPositionX && model.position.x > targetPositionX+0.5){
+    model.position.x = targetPositionX;
+    setPosition(model.position.x);
+  }
 }
