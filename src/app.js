@@ -414,15 +414,13 @@ function detectCollision() {
   for (var i = 0; i < obstacles.length; i++) {
     if (
       Math.round(obstacles[i].position.x * 10) / 10 + 2 >=
-        Math.round(position * 10) / 10 &&
+        Math.round(model.position.x * 10) / 10 &&
       Math.round(obstacles[i].position.x * 10) / 10 - 2 <=
-        Math.round(position * 10) / 10 &&
+        Math.round(model.position.x * 10) / 10 &&
       obstacles[i].position.z <= 2 &&
       obstacles[i].position.z > 0 &&
       model.position.y <= 1 &&
-      model.position.y >= 0 &&
-        Math.round(model.position.x * 10) / 10 &&
-      obstacles[i].position.z <= 2
+      model.position.y >= 0
     ) {
       //For line 1 which is left, for some reason camera z-axis isnt same way on the other
       if (obstacles[i].position.x == 15 && obstacles[i].position.z <= 1.2 && obstacles[i].position.z >= 0.2 ) {
@@ -576,10 +574,10 @@ function updateHUD() {
 //-------------------------------------
 function smoothMoveToLeft(targetPositionX){
   targetPositionX=position;
-  renderer.render(scene, camera);
 
   if (model.position.x < targetPositionX) {
-    model.position.x += 0.3;
+    model.position.x += 0.4;
+    setPosition(model.position.x);
     requestAnimationFrame(smoothMoveToLeft);
   }
   if(model.position.x > targetPositionX && model.position.x < targetPositionX+0.5){
@@ -590,10 +588,10 @@ function smoothMoveToLeft(targetPositionX){
 
 function smoothMoveToRight(targetPositionX){
   targetPositionX=position;
-  renderer.render(scene, camera);
   
   if (model.position.x > targetPositionX) {
-      model.position.x -= 0.3;
+      model.position.x -= 0.4;
+      setPosition(model.position.x);
       requestAnimationFrame(smoothMoveToRight);
   }
   if(model.position.x < targetPositionX && model.position.x > targetPositionX+0.5){
