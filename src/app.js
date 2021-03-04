@@ -250,26 +250,24 @@ function loadObstacleTypes() {
   });
   */
 
-  obstacleTypes = []
-  
-  console.log(obstacleTypes)
+  obstacleTypes = [];
+
+  console.log(obstacleTypes);
 
   mtlLoader.load("PropaneTank.mtl", function (materials) {
     materials.preload();
     objLoader.setMaterials(materials);
     objLoader.load("PropaneTank.obj", function (object) {
-      object.position.x = -15
-      object.position.z = 400
+      object.position.x = -15;
+      object.position.z = 400;
       obstacleTypes.push(object);
     });
     objLoader.load("PropaneTank.obj", function (object) {
-      object.position.x = 0
-      object.position.z = 350
+      object.position.x = 0;
+      object.position.z = 350;
       obstacleTypes.push(object);
     });
   });
-
- 
 
   /*
    mtlLoader.load("PropaneTank.mtl", function (materials) {
@@ -280,7 +278,6 @@ function loadObstacleTypes() {
     });
   });
   */
-  
 }
 
 //Generate ROCKS
@@ -295,7 +292,7 @@ function procGenerateRocks() {
 
     //var spawnNum = Math.round(Math.random() * 10 * game.spawnRate);
     //var spawnedObs;
-    console.log(obstacleTypes.length)
+    console.log(obstacleTypes.length);
     for (var i = 0; i < obstacleTypes.length; i++) {
       spawnedObs = obstacleTypes[i];
       //Direction, lanes
@@ -328,19 +325,18 @@ function procGenerateRocks() {
 }
 
 function moveObstacles() {
-
   for (var i = 0; i < obstacles.length; i++) {
     obstacles[i].position.z -= 20 * game.speed;
 
     if (obstacles[i].position.z < -20) {
       //Load new obstacles when old disappear
       scene.remove(obstacles[i]);
+      obstacles.pop(i);
+      obstacleTypes.pop(i);
       //obstacles.pop(i);
-      if (obstacleTypes.length < 3 && obstacles.length < 3) {
-        obstacles.pop(i);
+      if (obstacleTypes.length == 0 && obstacles.length == 0) {
         loadObstacleTypes();
-      } 
-     
+      }
     }
   }
 }
