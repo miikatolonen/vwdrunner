@@ -239,6 +239,8 @@ function loadObstacleTypes() {
   objLoader.setPath("src/models/");
   mtlLoader.setPath("src/models/");
 
+  let obstaclePattern = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
+
   /*
   //for (let i = 0; i < amount; i++) {
   mtlLoader.load("generator.mtl", function (materials) {
@@ -252,22 +254,88 @@ function loadObstacleTypes() {
 
   obstacleTypes = [];
 
-  console.log(obstacleTypes);
 
-  mtlLoader.load("PropaneTank.mtl", function (materials) {
-    materials.preload();
-    objLoader.setMaterials(materials);
-    objLoader.load("PropaneTank.obj", function (object) {
-      object.position.x = -15;
-      object.position.z = 400;
-      obstacleTypes.push(object);
+  
+  if (obstaclePattern === 1) { //Two obstacles
+    mtlLoader.load("PropaneTank.mtl", function (materials) {
+      materials.preload();
+      objLoader.setMaterials(materials);
+      objLoader.load("PropaneTank.obj", function (object) {
+        object.position.x = -15;
+        object.position.z = 400;
+        obstacleTypes.push(object);
+      });
     });
-    objLoader.load("PropaneTank.obj", function (object) {
-      object.position.x = 0;
-      object.position.z = 350;
-      obstacleTypes.push(object);
+     mtlLoader.load("PropaneTank.mtl", function (materials) {
+      materials.preload();
+      objLoader.setMaterials(materials);
+      objLoader.load("PropaneTank.obj", function (object) {
+        object.position.x = 0;
+        object.position.z = 350;
+        obstacleTypes.push(object);
+      });
     });
-  });
+  } else if (obstaclePattern === 2) { //Three obstacles
+    mtlLoader.load("PropaneTank.mtl", function (materials) {
+      materials.preload();
+      objLoader.setMaterials(materials);
+      objLoader.load("PropaneTank.obj", function (object) {
+        object.position.x = -15;
+        object.position.z = 400;
+        obstacleTypes.push(object);
+      });
+      objLoader.load("PropaneTank.obj", function (object) {
+        object.position.x = 0;
+        object.position.z = 350;
+        obstacleTypes.push(object);
+      });
+      objLoader.load("PropaneTank.obj", function (object) {
+        object.position.x = 15;
+        object.position.z = 400;
+        obstacleTypes.push(object);
+      });
+    });
+  } else if (obstaclePattern === 3) { //One obstacle
+    mtlLoader.load("PropaneTank.mtl", function (materials) {
+      materials.preload();
+      objLoader.setMaterials(materials);
+      objLoader.load("PropaneTank.obj", function (object) {
+        object.position.x = -15;
+        object.position.z = 400;
+        obstacleTypes.push(object);
+      });
+    });
+  } else if (obstaclePattern === 4) { //Two obstacle, left and right
+    mtlLoader.load("PropaneTank.mtl", function (materials) {
+      materials.preload();
+      objLoader.setMaterials(materials);
+      objLoader.load("PropaneTank.obj", function (object) {
+        object.position.x = -15;
+        object.position.z = 400;
+        obstacleTypes.push(object);
+      });
+      objLoader.load("PropaneTank.obj", function (object) {
+        object.position.x = 15;
+        object.position.z = 400;
+        obstacleTypes.push(object);
+      });
+    });
+  } else if (obstaclePattern === 5) { // Two from middle
+    mtlLoader.load("PropaneTank.mtl", function (materials) {
+      materials.preload();
+      objLoader.setMaterials(materials);
+      objLoader.load("PropaneTank.obj", function (object) {
+        object.position.x = 0;
+        object.position.z = 400;
+        obstacleTypes.push(object);
+      });
+      objLoader.load("PropaneTank.obj", function (object) {
+        object.position.x = 0;
+        object.position.z = 350;
+        obstacleTypes.push(object);
+      });
+    });
+  }
 
   /*
    mtlLoader.load("PropaneTank.mtl", function (materials) {
@@ -328,7 +396,7 @@ function moveObstacles() {
   for (var i = 0; i < obstacles.length; i++) {
     obstacles[i].position.z -= 20 * game.speed;
 
-    if (obstacles[i].position.z < -20) {
+    if (obstacles[i].position.z < -70) {
       //Load new obstacles when old disappear
       scene.remove(obstacles[i]);
       obstacles.pop(i);
@@ -350,11 +418,18 @@ function detectCollision() {
       Math.round(obstacles[i].position.x * 10) / 10 - 2 <=
         Math.round(position * 10) / 10 &&
       obstacles[i].position.z <= 2 &&
+      obstacles[i].position.z > 0 &&
       model.position.y <= 1 &&
       model.position.y >= 0
     ) {
+      //For line 1 which is left, for some reason camera z-axis isnt same way on the other
+      if (obstacles[i].position.x == 15 && obstacles[i].position.z <= 1.2 && obstacles[i].position.z >= 0.2 ) {
+        EndGame()
+      } else {
+        EndGame();
+      }
       //Game OVER
-      EndGame();
+      
     }
   }
 }
@@ -390,6 +465,7 @@ function restartGame() {
   model.position.set(position, 0, 0);
   game.points = 0;
   game.finished = false;
+  game.speed = 0.1;
   loadObstacleTypes();
   animate();
 }
