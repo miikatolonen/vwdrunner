@@ -8,33 +8,6 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 //Jump function
 import { jump } from "./scripts/Movement/characterMovement.js";
 
-class ResourceTracker {
-  constructor() {
-    this.resources = new Set();
-  }
-  track(resource) {
-    if (resource.dispose || resource instanceof THREE.Object3D) {
-      this.resources.add(resource);
-    }
-    return resource;
-  }
-  untrack(resource) {
-    this.resources.delete(resource);
-  }
-  dispose() {
-    for (const resource of this.resources) {
-      if (resource instanceof THREE.Object3D) {
-        if (resource.parent) {
-          resource.parent.remove(resource);
-        }
-      }
-      if (resource.dispose) {
-        resource.dispose();
-      }
-    }
-    this.resources.clear();
-  }
-}
 
 //Game variables
 let container, clock, mixer, activeAction, previousAction, currentAction;
@@ -78,8 +51,6 @@ init();
 animate();
 
 function init() {
-  //container = document.getElementById("demo");
-  //document.body.appendChild(container);
 
   container = document.createElement("div");
   container.id = "game";
