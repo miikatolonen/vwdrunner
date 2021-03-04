@@ -5,7 +5,7 @@ module.exports = {
   entry: './src/app.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: './dist/main.js'
+    filename: './main.js'
   },
   devServer: {
     historyApiFallback: {

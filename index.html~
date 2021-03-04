@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Gorilla Runner</title>
+	<link type="text/css" rel="stylesheet" href="src/styles/main.css" />
+    <style>
+      body {
+        color: #222;
+      }
+
+      a {
+        color: #2fa1d6;
+      }
+
+      p {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 2em;
+      }
+    </style>
+     <script
+     src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.module.js"
+     integrity="sha512-cwNDDJ0zFqexVpo3ZF1Yxl0u/oVh6PvOT+yLgqwzDU94k3rNmdcRfo4ZJL7f1GiBh7m+fbrkNvV1+ggXHBDZ5g=="
+     crossorigin="anonymous"
+   ></script>
+  </head>
+  <body>
+    <!--
+    <div id="demo"></div>
+    -->
+    <script src="./dist/main.js"></script>
+  </body>
+</html>
