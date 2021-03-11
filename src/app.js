@@ -8,7 +8,6 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 //Jump function
 import { jump } from "./scripts/Movement/characterMovement.js";
 
-
 //Game variables
 let container, clock, mixer, activeAction, previousAction, currentAction;
 let camera,
@@ -51,7 +50,6 @@ init();
 animate();
 
 function init() {
-
   container = document.createElement("div");
   container.id = "game";
   document.body.appendChild(container);
@@ -225,9 +223,8 @@ function loadObstacleTypes() {
 
   obstacleTypes = [];
 
-
-  
-  if (obstaclePattern === 1) { //Two obstacles
+  if (obstaclePattern === 1) {
+    //Two obstacles
     mtlLoader.load("PropaneTank.mtl", function (materials) {
       materials.preload();
       objLoader.setMaterials(materials);
@@ -237,7 +234,7 @@ function loadObstacleTypes() {
         obstacleTypes.push(object);
       });
     });
-     mtlLoader.load("PropaneTank.mtl", function (materials) {
+    mtlLoader.load("PropaneTank.mtl", function (materials) {
       materials.preload();
       objLoader.setMaterials(materials);
       objLoader.load("PropaneTank.obj", function (object) {
@@ -246,7 +243,8 @@ function loadObstacleTypes() {
         obstacleTypes.push(object);
       });
     });
-  } else if (obstaclePattern === 2) { //Three obstacles
+  } else if (obstaclePattern === 2) {
+    //Three obstacles
     mtlLoader.load("PropaneTank.mtl", function (materials) {
       materials.preload();
       objLoader.setMaterials(materials);
@@ -266,7 +264,8 @@ function loadObstacleTypes() {
         obstacleTypes.push(object);
       });
     });
-  } else if (obstaclePattern === 3) { //One obstacle
+  } else if (obstaclePattern === 3) {
+    //One obstacle
     mtlLoader.load("PropaneTank.mtl", function (materials) {
       materials.preload();
       objLoader.setMaterials(materials);
@@ -276,7 +275,8 @@ function loadObstacleTypes() {
         obstacleTypes.push(object);
       });
     });
-  } else if (obstaclePattern === 4) { //Two obstacle, left and right
+  } else if (obstaclePattern === 4) {
+    //Two obstacle, left and right
     mtlLoader.load("PropaneTank.mtl", function (materials) {
       materials.preload();
       objLoader.setMaterials(materials);
@@ -291,7 +291,8 @@ function loadObstacleTypes() {
         obstacleTypes.push(object);
       });
     });
-  } else if (obstaclePattern === 5) { // Two from middle
+  } else if (obstaclePattern === 5) {
+    // Two from middle
     mtlLoader.load("PropaneTank.mtl", function (materials) {
       materials.preload();
       objLoader.setMaterials(materials);
@@ -394,13 +395,16 @@ function detectCollision() {
       model.position.y >= 0
     ) {
       //For line 1 which is left, for some reason camera z-axis isnt same way on the other
-      if (obstacles[i].position.x == 15 && obstacles[i].position.z <= 1.2 && obstacles[i].position.z >= 0.2 ) {
-        EndGame()
+      if (
+        obstacles[i].position.x == 15 &&
+        obstacles[i].position.z <= 1.2 &&
+        obstacles[i].position.z >= 0.2
+      ) {
+        EndGame();
       } else {
         EndGame();
       }
       //Game OVER
-      
     }
   }
 }
@@ -445,7 +449,6 @@ function animate() {
   if (!game.finished) {
     const dt = clock.getDelta();
     if (mixer) mixer.update(dt);
-    updatePlayer();
     procGenerateRocks();
     moveObstacles();
     detectCollision();
@@ -463,12 +466,14 @@ function onDocumentKeyDown(event) {
 
   if (model.position.y != 0) return;
   //Right 65 = A & 37 = <-
-  if (keyCode == 65 || keyCode == 37) {
+  if ((keyCode == 65 || keyCode == 37) && !state.moveLeft) {
     state.moveLeft = true;
+    updatePlayer();
   }
   //Left 68 = D & 39 = ->
-  else if (keyCode == 68 || keyCode == 39) {
+  else if ((keyCode == 68 || keyCode == 39) && !state.moveRight) {
     state.moveRight = true;
+    updatePlayer();
   }
   //Jump
   else if (keyCode == 87 || keyCode == 32 || keyCode == 38) {
@@ -482,8 +487,8 @@ function onDocumentKeyDown(event) {
     //Jump logic
     jump(model, position, currentAction, activeAction);
   }
-  updatePlayer();
 }
+
 
 document.addEventListener("keyup", function (event) {
   if (event.keyCode == 37 || event.keyCode == 65) {
@@ -508,31 +513,26 @@ function updatePlayer() {
   if (state.moveLeft && position < 0) {
     position = 0;
     smoothMoveToLeft(position);
-    moveLeftAndRightToFalse();
-  } 
-  else if (state.moveLeft && position >= 0) {
+
+    
+  } else if (state.moveLeft && position >= 0) {
     position = 15;
     smoothMoveToLeft(position);
-    moveLeftAndRightToFalse();
-  }
-  else if (state.moveRight && position > 0) {
+
+    
+  } else if (state.moveRight && position > 0) {
     position = 0;
     smoothMoveToRight(position);
-    moveLeftAndRightToFalse();
-  }
-  else if (state.moveRight && position <= 0) {
+   
+  } else if (state.moveRight && position <= 0) {
     position = -15;
     smoothMoveToRight(position);
-    moveLeftAndRightToFalse();
+   
   }
 }
 
 function setPosition(position) {
   model.position.set(position, 0, 0);
-}
-function moveLeftAndRightToFalse(){
-  state.moveLeft=false;
-  state.moveRight=false;
 }
 
 function updateHUD() {
@@ -543,29 +543,35 @@ function updateHUD() {
 //-------------------------------------
 // Smoother movements for the robot
 //-------------------------------------
-function smoothMoveToLeft(targetPositionX){
-  targetPositionX=position;
+function smoothMoveToLeft(targetPositionX) {
+  targetPositionX = position;
 
   if (model.position.x < targetPositionX) {
     model.position.x += 0.4;
     setPosition(model.position.x);
     requestAnimationFrame(smoothMoveToLeft);
   }
-  if(model.position.x > targetPositionX && model.position.x < targetPositionX+0.5){
+  if (
+    model.position.x > targetPositionX &&
+    model.position.x < targetPositionX + 0.5
+  ) {
     model.position.x = targetPositionX;
     setPosition(model.position.x);
   }
 }
 
-function smoothMoveToRight(targetPositionX){
-  targetPositionX=position;
-  
+function smoothMoveToRight(targetPositionX) {
+  targetPositionX = position;
+
   if (model.position.x > targetPositionX) {
-      model.position.x -= 0.4;
-      setPosition(model.position.x);
-      requestAnimationFrame(smoothMoveToRight);
+    model.position.x -= 0.4;
+    setPosition(model.position.x);
+    requestAnimationFrame(smoothMoveToRight);
   }
-  if(model.position.x < targetPositionX && model.position.x > targetPositionX+0.5){
+  if (
+    model.position.x < targetPositionX &&
+    model.position.x > targetPositionX + 0.5
+  ) {
     model.position.x = targetPositionX;
     setPosition(model.position.x);
   }
