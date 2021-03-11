@@ -464,7 +464,7 @@ document.addEventListener("keydown", onDocumentKeyDown, false);
 function onDocumentKeyDown(event) {
   var keyCode = event.which;
 
-  if (model.position.y != 0) return;
+  if (model.position.y > 0) return;
   //Right 65 = A & 37 = <-
   if ((keyCode == 65 || keyCode == 37) && !state.moveLeft) {
     state.moveLeft = true;
@@ -489,7 +489,6 @@ function onDocumentKeyDown(event) {
   }
 }
 
-
 document.addEventListener("keyup", function (event) {
   if (event.keyCode == 37 || event.keyCode == 65) {
     state.moveLeft = false;
@@ -513,26 +512,20 @@ function updatePlayer() {
   if (state.moveLeft && position < 0) {
     position = 0;
     smoothMoveToLeft(position);
-
-    
   } else if (state.moveLeft && position >= 0) {
     position = 15;
     smoothMoveToLeft(position);
-
-    
   } else if (state.moveRight && position > 0) {
     position = 0;
     smoothMoveToRight(position);
-   
   } else if (state.moveRight && position <= 0) {
     position = -15;
     smoothMoveToRight(position);
-   
   }
 }
 
 function setPosition(position) {
-  model.position.set(position, 0, 0);
+  model.position.x = position;
 }
 
 function updateHUD() {

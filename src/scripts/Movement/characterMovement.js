@@ -1,12 +1,8 @@
 //For the jump
-let isGoingRight = false;
-let isGoingLeft = false;
 let isJumping = false;
 let bottom = 0;
 let gravity = 0.9;
-let left = 0;
-let leftTimerId;
-let rightTimerId;
+
 
 export function jump(model, position, currentAction, activeAction) {
     if (isJumping) return;
@@ -24,7 +20,7 @@ export function jump(model, position, currentAction, activeAction) {
           //To avoid negativity, position will change otherwise if negative
           if (bottom < 0) {
             //Set Character to same position where it was before jump
-            model.position.set(position, 0, 0);
+            //model.position.set(position, 0, 0);
             //Stop current jump animation
             currentAction.stop();
             //Start running animation again
@@ -32,7 +28,8 @@ export function jump(model, position, currentAction, activeAction) {
           } else {
             bottom -= 1.75;
             bottom = bottom * gravity;
-            model.position.set(position, bottom, 0);
+            //model.position.set(position, bottom, 0);
+            model.position.y = bottom;
           }
         }, 40);
       }
@@ -40,7 +37,8 @@ export function jump(model, position, currentAction, activeAction) {
       isJumping = true;
       bottom += 1.75;
       bottom = bottom * gravity;
-      model.position.set(position, bottom, 0);
+      //model.position.set(position, bottom, 0);
+      model.position.y = bottom;
     }, 40);
   }
 
