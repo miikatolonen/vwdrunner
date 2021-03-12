@@ -17,8 +17,9 @@ let camera,
   pointHud,
   gameStart,
   gameStop,
+  grid,
+  floor,
   playBtn;
-
 
 //Game state
 const state = {
@@ -75,6 +76,7 @@ function init() {
 
   // lights
 
+  
   const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
   hemiLight.position.set(0, 20, 0);
   scene.add(hemiLight);
@@ -129,13 +131,43 @@ function init() {
 */
   // ground
 
+  /*
   const mesh = new THREE.Mesh(
     new THREE.PlaneGeometry(2000, 2000),
     new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false })
   );
   mesh.rotation.x = -Math.PI / 2;
   scene.add(mesh);
+  */
 
+  var asloader = new THREE.TextureLoader();
+
+  var grassTexture = asloader.load(
+    "src/models/desert.jpg",
+    function (texture) {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      texture.offset.set(0, 0);
+      texture.repeat.set(1, 512);
+    }
+  );
+
+  floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(100, 100000, 8, 8),
+    new THREE.MeshLambertMaterial({
+      map: grassTexture,
+    })
+  );
+  floor.rotation.x -= Math.PI / 2;
+  floor.position.y = -11;
+  scene.add(floor);
+
+  /*
+  grid = new THREE.GridHelper(2000, 40, 0x000000, 0x000000);
+  grid.material.opacity = 0.3;
+  grid.material.depthWrite = false;
+  grid.material.transparent = true;
+  scene.add(grid);
+*/
   // model
 
   const loader = new GLTFLoader();
@@ -201,8 +233,6 @@ function loadObstacleTypes() {
   mtlLoader.setPath("src/models/");
 
   let obstaclePattern = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
-
-
 
   //Two obstacles
 
@@ -305,15 +335,13 @@ function loadObstacleTypes() {
       });
     });
   }
-
-
 }
 
 //Generate Propanetanks
 function generateObjects() {
   newTime = new Date().getTime();
   let obstacle;
- 
+
   if (newTime - oldTime > 2000) {
     oldTime = new Date().getTime();
 
@@ -324,7 +352,6 @@ function generateObjects() {
       obstacles.push(obstacle);
     }
     obstacleTypes = [];
-
   }
 }
 
@@ -373,25 +400,23 @@ function detectCollision() {
         obstacles[i].position.z < -1 &&
         obstacles[i].position.z > -10
       ) {
-        EndSound()
+        EndSound();
         EndGame();
       } else if (
         obstacles[i].position.x === -15 &&
         obstacles[i].position.z < -1 &&
         obstacles[i].position.z > -10
       ) {
-        EndSound()
+        EndSound();
         EndGame();
       } else if (
         obstacles[i].position.x === 0 &&
         obstacles[i].position.z < 0 &&
         obstacles[i].position.z > -10
       ) {
-        EndSound()
+        EndSound();
         EndGame();
       }
-      
-      //EndGame();
 
       //Game OVER
     }
@@ -440,6 +465,8 @@ function animate() {
     const dt = clock.getDelta();
     if (mixer) mixer.update(dt);
     generateObjects();
+    const time = -performance.now() / 1000;
+    floor.position.z -= 2;
     moveObstacles();
     detectCollision();
     updateHUD();
@@ -487,7 +514,6 @@ document.addEventListener("keyup", function (event) {
     state.moveRight = false;
   }
 });
-
 
 function updatePlayer() {
   if (state.moveLeft && position < 0) {
