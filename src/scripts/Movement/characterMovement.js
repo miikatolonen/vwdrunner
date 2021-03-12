@@ -25,6 +25,7 @@ export function jump(model, position, currentAction, activeAction) {
             currentAction.stop();
             //Start running animation again
             activeAction.play();
+            model.position.y = 0
           } else {
             bottom -= 1.75;
             bottom = bottom * gravity;

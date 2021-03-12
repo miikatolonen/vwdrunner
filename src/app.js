@@ -221,6 +221,20 @@ function loadObstacleTypes() {
   });
   */
 
+  //Two obstacles
+  
+  /*
+    mtlLoader.load("PropaneTank.mtl", function (materials) {
+      materials.preload();
+      objLoader.setMaterials(materials);
+      objLoader.load("PropaneTank.obj", function (object) {
+        object.position.x = -15;
+        object.position.z = 400;
+        obstacleTypes.push(object);
+      });
+    });
+   */
+
   obstacleTypes = [];
 
   if (obstaclePattern === 1) {
@@ -332,7 +346,7 @@ function procGenerateRocks() {
 
     //var spawnNum = Math.round(Math.random() * 10 * game.spawnRate);
     //var spawnedObs;
-    console.log(obstacleTypes.length);
+    //console.log(obstacleTypes.length);
     for (var i = 0; i < obstacleTypes.length; i++) {
       spawnedObs = obstacleTypes[i];
       //Direction, lanes
@@ -384,26 +398,30 @@ function moveObstacles() {
 
 function detectCollision() {
   for (var i = 0; i < obstacles.length; i++) {
+    console.log('Player position', model.position.x, model.position.y, model.position.z)
+    //console.log(obstacles[i].position.z);
+    console.log("Obstaakkeli: ", Math.round(obstacles[i].position.x * 10) / 10 + 2,
+        Math.round(model.position.x * 10) / 10,
+      Math.round(obstacles[i].position.x * 10) / 10 - 2,
+        Math.round(model.position.x * 10) / 10)
     if (
-      Math.round(obstacles[i].position.x * 10) / 10 + 2 >=
+      Math.round(obstacles[i].position.x * 10) / 10 + 2 >
         Math.round(model.position.x * 10) / 10 &&
-      Math.round(obstacles[i].position.x * 10) / 10 - 2 <=
+      Math.round(obstacles[i].position.x * 10) / 10 - 2 <
         Math.round(model.position.x * 10) / 10 &&
-      obstacles[i].position.z <= 2 &&
-      obstacles[i].position.z > 0 &&
-      model.position.y <= 1 &&
-      model.position.y >= 0
+      model.position.y <= 1
     ) {
-      //For line 1 which is left, for some reason camera z-axis isnt same way on the other
-      if (
-        obstacles[i].position.x == 15 &&
-        obstacles[i].position.z <= 1.2 &&
-        obstacles[i].position.z >= 0.2
-      ) {
+      
+      if (obstacles[i].position.x === 15 && obstacles[i].position.z < -1 && obstacles[i].position.z > -10) {
         EndGame();
-      } else {
+      } else if (obstacles[i].position.x === -15 && obstacles[i].position.z < -1 && obstacles[i].position.z > -10) {
+        EndGame();
+      } else if (obstacles[i].position.x === 0 && obstacles[i].position.z < 0 && obstacles[i].position.z > -10) {
         EndGame();
       }
+      console.log(obstacles[i].position.z)
+      //EndGame();
+
       //Game OVER
     }
   }
