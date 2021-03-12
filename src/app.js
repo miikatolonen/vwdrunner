@@ -69,21 +69,24 @@ function init() {
   camera.lookAt(new THREE.Vector3(0, 2, 400));
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xe0e0e0);
+  scene.background = new THREE.Color(0x0055ff);
   //scene.fog = new THREE.Fog(0xe0e0e0, 20, 100);
 
   clock = new THREE.Clock();
 
   // lights
 
-  
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
+  const hemiLight = new THREE.HemisphereLight(0x4c5559, 0x444444);
   hemiLight.position.set(0, 20, 0);
   scene.add(hemiLight);
 
-  const dirLight = new THREE.DirectionalLight(0xffffff);
+  const dirLight = new THREE.DirectionalLight(0xc8cbcc);
   dirLight.position.set(0, 20, 10);
   scene.add(dirLight);
+
+  createSky();
+  
+
 
   //Loading Obstacles
   loadObstacleTypes();
@@ -218,6 +221,7 @@ function fadeToAction(duration) {
     .fadeIn(duration)
     .play();
 }
+
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -370,7 +374,20 @@ function moveObstacles() {
     }
   }
 }
-//Math.round(number * 10) / 10
+
+function createSky(){
+  const geometry = new THREE.CircleGeometry(2,32);
+  const material = new THREE.MeshBasicMaterial( {color: 0xffae00, side: THREE.DoubleSide} );
+  const sun = new THREE.Mesh( geometry, material );
+  sun.position.set(16,14,0);
+  //scene.add(sun);
+  //scene.add(cloud);
+  const imageLoader = new THREE.TextureLoader();
+  scene.background = imageLoader.load(
+      "/src/sky.jpg"
+  );
+}
+
 
 function detectCollision() {
   for (var i = 0; i < obstacles.length; i++) {
