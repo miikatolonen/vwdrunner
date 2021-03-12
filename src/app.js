@@ -14,12 +14,11 @@ let camera,
   scene,
   renderer,
   model,
-  face,
   pointHud,
   gameStart,
   gameStop,
   playBtn;
-let resTracker, track;
+
 
 //Game state
 const state = {
@@ -44,7 +43,6 @@ var oldTime = new Date().getTime();
 // Arrays to hold model objects
 var obstacleTypes = [];
 var obstacles = [];
-var coins = [];
 
 init();
 animate();
@@ -168,8 +166,6 @@ function createCharacter(model, animations) {
   //Importing model
   mixer = new THREE.AnimationMixer(model);
 
-  //activeAction = actions[mixer.clipAction( animations[ 3 ] ) ];
-
   //Choosing which animation we want display -> 6 = Running
 
   activeAction = mixer.clipAction(animations[6]).play();
@@ -182,10 +178,6 @@ function createCharacter(model, animations) {
 function fadeToAction(duration) {
   //previousAction = activeAction;
   currentAction = previousAction;
-
-  //if (previousAction !== activeAction) {
-  //previousAction.fadeOut(duration);
-  //}
 
   currentAction
     .reset()
@@ -210,19 +202,10 @@ function loadObstacleTypes() {
 
   let obstaclePattern = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
 
-  /*
-  //for (let i = 0; i < amount; i++) {
-  mtlLoader.load("generator.mtl", function (materials) {
-    materials.preload();
-    objLoader.setMaterials(materials);
-    objLoader.load("generator.obj", function (object) {
-      obstacleTypes.push(object);
-    });
-  });
-  */
+
 
   //Two obstacles
-  
+
   /*
     mtlLoader.load("PropaneTank.mtl", function (materials) {
       materials.preload();
@@ -323,58 +306,25 @@ function loadObstacleTypes() {
     });
   }
 
-  /*
-   mtlLoader.load("PropaneTank.mtl", function (materials) {
-    materials.preload();
-    objLoader.setMaterials(materials);
-    objLoader.load("PropaneTank.obj", function (object) {
-      obstacleTypes.push(object);
-    });
-  });
-  */
+
 }
 
-//Generate ROCKS
-function procGenerateRocks() {
+//Generate Propanetanks
+function generateObjects() {
   newTime = new Date().getTime();
-  let spawnedObs;
-  let spawnedObsLocation = [-15, 0, 15]; //Three lines where obstacles can be spawned
-  var randomLocation =
-    spawnedObsLocation[Math.floor(Math.random() * spawnedObsLocation.length)]; //obstacle location
+  let obstacle;
+ 
   if (newTime - oldTime > 2000) {
     oldTime = new Date().getTime();
 
-    //var spawnNum = Math.round(Math.random() * 10 * game.spawnRate);
-    //var spawnedObs;
-    //console.log(obstacleTypes.length);
     for (var i = 0; i < obstacleTypes.length; i++) {
-      spawnedObs = obstacleTypes[i];
-      //Direction, lanes
-      //spawnedObs.position.x = -5; //20 + Math.random() * 30;
-      /*
-      spawnedObs.position.x =
-        spawnedObsLocation[
-          Math.floor(Math.random() * spawnedObsLocation.length)
-        ];
-        */
-      //From how long obs starts to respawn
-      //spawnedObs.position.z = 400;
-      spawnedObs.scale.set(1, 1, 1);
-      scene.add(spawnedObs);
-      obstacles.push(spawnedObs);
+      obstacle = obstacleTypes[i];
+      obstacle.scale.set(1, 1, 1);
+      scene.add(obstacle);
+      obstacles.push(obstacle);
     }
     obstacleTypes = [];
 
-    // spawnNum = Math.round(Math.random() * 3 * game.spawnRate);
-    // for (var i = 0; i < spawnNum; i++) {
-    //   spawnedObs = new Coin();
-    //   spawnedObs.mesh.position.x = -10 + Math.random() * 20;
-    //   spawnedObs.mesh.position.z = -20 - Math.random() * 10;
-    //   spawnedObs.mesh.position.y = 0.3;
-    //   spawnedObs.mesh.scale.set(0.05, 0.05, 0.05);
-    //   //coins.push(spawnedObs);
-    //   scene.add(spawnedObs.mesh);
-    //}
   }
 }
 
@@ -387,7 +337,6 @@ function moveObstacles() {
       scene.remove(obstacles[i]);
       obstacles.pop(i);
       obstacleTypes.pop(i);
-      //obstacles.pop(i);
       if (obstacleTypes.length == 0 && obstacles.length == 0) {
         loadObstacleTypes();
       }
@@ -398,12 +347,20 @@ function moveObstacles() {
 
 function detectCollision() {
   for (var i = 0; i < obstacles.length; i++) {
-    console.log('Player position', model.position.x, model.position.y, model.position.z)
+    console.log(
+      "Player position",
+      model.position.x,
+      model.position.y,
+      model.position.z
+    );
     //console.log(obstacles[i].position.z);
-    console.log("Obstaakkeli: ", Math.round(obstacles[i].position.x * 10) / 10 + 2,
-        Math.round(model.position.x * 10) / 10,
+    console.log(
+      "Obstaakkeli: ",
+      Math.round(obstacles[i].position.x * 10) / 10 + 2,
+      Math.round(model.position.x * 10) / 10,
       Math.round(obstacles[i].position.x * 10) / 10 - 2,
-        Math.round(model.position.x * 10) / 10)
+      Math.round(model.position.x * 10) / 10
+    );
     if (
       Math.round(obstacles[i].position.x * 10) / 10 + 2 >
         Math.round(model.position.x * 10) / 10 &&
@@ -411,20 +368,40 @@ function detectCollision() {
         Math.round(model.position.x * 10) / 10 &&
       model.position.y <= 1
     ) {
-      
-      if (obstacles[i].position.x === 15 && obstacles[i].position.z < -1 && obstacles[i].position.z > -10) {
+      if (
+        obstacles[i].position.x === 15 &&
+        obstacles[i].position.z < -1 &&
+        obstacles[i].position.z > -10
+      ) {
+        EndSound()
         EndGame();
-      } else if (obstacles[i].position.x === -15 && obstacles[i].position.z < -1 && obstacles[i].position.z > -10) {
+      } else if (
+        obstacles[i].position.x === -15 &&
+        obstacles[i].position.z < -1 &&
+        obstacles[i].position.z > -10
+      ) {
+        EndSound()
         EndGame();
-      } else if (obstacles[i].position.x === 0 && obstacles[i].position.z < 0 && obstacles[i].position.z > -10) {
+      } else if (
+        obstacles[i].position.x === 0 &&
+        obstacles[i].position.z < 0 &&
+        obstacles[i].position.z > -10
+      ) {
+        EndSound()
         EndGame();
       }
-      console.log(obstacles[i].position.z)
+      
       //EndGame();
 
       //Game OVER
     }
   }
+}
+
+function EndSound() {
+  var endSound = new Audio();
+  endSound.src = "https://freesound.org/data/previews/404/404754_140737-lq.mp3";
+  endSound.play();
 }
 
 function cleanObstacles() {
@@ -436,11 +413,6 @@ function cleanObstacles() {
 function EndGame() {
   game.finished = true;
 
-  /*
-  while (scene.children.length > 0) {
-    scene.remove(scene.children[0]);
-  }
-  */
   document.getElementById("game").style.display = "none";
   gameStop.innerHTML = "Game over! You got " + game.points + " points";
   gameStop.appendChild(playBtn);
@@ -467,7 +439,7 @@ function animate() {
   if (!game.finished) {
     const dt = clock.getDelta();
     if (mixer) mixer.update(dt);
-    procGenerateRocks();
+    generateObjects();
     moveObstacles();
     detectCollision();
     updateHUD();
@@ -516,15 +488,6 @@ document.addEventListener("keyup", function (event) {
   }
 });
 
-/*function updatePlayer() {
-  if (state.moveLeft && position <= 10) {
-    position += 0.2;
-    model.position.set(position, 0, 0);
-  } else if (state.moveRight && position >= -10) {
-    position -= 0.2;
-    model.position.set(position, 0, 0);
-  }
-}*/
 
 function updatePlayer() {
   if (state.moveLeft && position < 0) {
