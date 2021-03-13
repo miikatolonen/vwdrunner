@@ -122,6 +122,7 @@ function init() {
   playBtn.classList.add("playBtn");
   playBtn.addEventListener("click", function () {
     restartGame();
+    GameSound();
   });
   playBtn.innerHTML = "Play Again";
 
@@ -444,6 +445,20 @@ function EndSound() {
   var endSound = new Audio();
   endSound.src = "https://freesound.org/data/previews/404/404754_140737-lq.mp3";
   endSound.play();
+}
+function GameSound(){
+var gameSound = new Audio(); 
+gameSound.src ="https://freesound.org/data/previews/410/410574_625529-lq.mp3";
+if (typeof gameSound.loop == 'boolean')
+{
+    gameSound.loop = true;
+}else{
+    gameSound.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
+}
+gameSound.play();
 }
 
 function cleanObstacles() {
