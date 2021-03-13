@@ -52,6 +52,7 @@ function init() {
   container = document.createElement("div");
   container.id = "game";
   document.body.appendChild(container);
+  GameSound();
 
   camera = new THREE.PerspectiveCamera(
     40,
