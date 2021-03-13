@@ -19,13 +19,16 @@ let camera,
   gameStop,
   grid,
   floor,
-  playBtn;
+  playBtn,
+  infoBtn,
+  startBtn;
 
 //Game state
 const state = {
   moveLeft: false,
   moveRight: false,
   isJumping: false,
+  bgMusicPlay: false
 };
 
 //Position of Character, 0 -> middle of the screen
@@ -46,13 +49,13 @@ var obstacleTypes = [];
 var obstacles = [];
 
 init();
-animate();
+
 
 function init() {
   container = document.createElement("div");
   container.id = "game";
   document.body.appendChild(container);
-  GameSound();
+  
 
   camera = new THREE.PerspectiveCamera(
     40,
@@ -87,63 +90,8 @@ function init() {
 
   createSky();
   
-
-
   //Loading Obstacles
   loadObstacleTypes();
-
-  pointHud = document.createElement("div");
-  pointHud.id = "pointhud";
-  pointHud.style.position = "absolute";
-  //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-  pointHud.style.width = 400;
-  pointHud.style.height = 400;
-  pointHud.innerHTML = "0";
-  pointHud.style.fontSize = "80px";
-  pointHud.style.top = "10%";
-  pointHud.style.left = "80%";
-  document.body.appendChild(pointHud);
-
-  gameStop = document.createElement("div");
-  gameStop.id = "gamestop";
-  gameStop.style.position = "absolute";
-  gameStop.style.width = 2000;
-  gameStop.style.height = 2000;
-  gameStop.style.fontSize = "50px";
-  gameStop.style.textAlign = "center";
-  gameStop.style.backgroundColor = "white";
-  gameStop.classList.add("overlay");
-  playBtn = document.createElement("BUTTON");
-  playBtn.id = "playbtn";
-  playBtn.style.width = 200;
-  playBtn.style.height = 100;
-  playBtn.style.fontSize = "20px";
-  playBtn.style.top = "50%";
-  playBtn.style.left = "50%";
-  playBtn.classList.add("playBtn");
-  playBtn.addEventListener("click", function () {
-    restartGame();
-    GameSound();
-  });
-  playBtn.innerHTML = "Play Again";
-
-  //background IMAGE
-  /*
-    const imageLoader = new THREE.TextureLoader();
-    scene.background = imageLoader.load(
-        "/three.js/test.jpg"
-    );
-*/
-  // ground
-
-  /*
-  const mesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(2000, 2000),
-    new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false })
-  );
-  mesh.rotation.x = -Math.PI / 2;
-  scene.add(mesh);
-  */
 
   var asloader = new THREE.TextureLoader();
 
@@ -165,15 +113,6 @@ function init() {
   floor.rotation.x -= Math.PI / 2;
   floor.position.y = -11;
   scene.add(floor);
-
-  /*
-  grid = new THREE.GridHelper(2000, 40, 0x000000, 0x000000);
-  grid.material.opacity = 0.3;
-  grid.material.depthWrite = false;
-  grid.material.transparent = true;
-  scene.add(grid);
-*/
-  // model
 
   const loader = new GLTFLoader();
   loader.load(
@@ -197,6 +136,9 @@ function init() {
   container.appendChild(renderer.domElement);
 
   window.addEventListener("resize", onWindowResize);
+  gameStarting();
+  gameEnding();
+  loadHUD();
 }
 
 function createCharacter(model, animations) {
@@ -470,7 +412,6 @@ function cleanObstacles() {
 
 function EndGame() {
   game.finished = true;
-
   document.getElementById("game").style.display = "none";
   gameStop.innerHTML = "Game over! You got " + game.points + " points";
   gameStop.appendChild(playBtn);
@@ -480,7 +421,6 @@ function EndGame() {
 
 function restartGame() {
   document.getElementById("game").style.display = "block";
-  document.getElementById("gamestop").style.display = "none";
   cleanObstacles();
   position = 0;
   obstacles = [];
@@ -489,6 +429,7 @@ function restartGame() {
   game.points = 0;
   game.finished = false;
   game.speed = 0.1;
+  state.bgMusicPlay = true;
   loadObstacleTypes();
   animate();
 }
@@ -608,4 +549,91 @@ function smoothMoveToRight(targetPositionX) {
     model.position.x = targetPositionX;
     setPosition(model.position.x);
   }
+}
+
+function gameStarting() {
+  gameStart = document.createElement("div");
+  gameStart.style.display = "block";
+  gameStart.id = "game";
+  gameStart.style.position = "absolute";
+  gameStart.style.width = 2000;
+  gameStart.style.height = 2000;
+  gameStart.innerHTML = "ROBOT RUNNER"
+  gameStart.style.fontSize = "50px";
+  gameStart.style.textAlign = "center";
+  gameStart.style.backgroundColor = "white";
+  gameStart.classList.add("overlay");
+
+  infoBtn = document.createElement("BUTTON");
+  infoBtn.id = "playbtn";
+  infoBtn.style.width = 200;
+  infoBtn.style.height = 100;
+  infoBtn.style.fontSize = "20px";
+  infoBtn.style.top = "50%";
+  infoBtn.style.left = "50%";
+  infoBtn.classList.add("playBtn");
+  infoBtn.innerHTML = "Game Info";
+
+  startBtn = document.createElement("BUTTON");
+  startBtn.id = "playbtn";
+  startBtn.style.width = 200;
+  startBtn.style.height = 100;
+  startBtn.style.fontSize = "20px";
+  startBtn.style.top = "50%";
+  startBtn.style.left = "50%";
+  startBtn.classList.add("playBtn");
+  startBtn.innerHTML = "Start Game";
+  startBtn.addEventListener("click", function () {
+    gameStart.style.display = "none";
+    infoBtn.style.display = "none";
+    startBtn.style.display = "none";
+    restartGame();
+  });
+  document.body.appendChild(gameStart);
+  document.body.appendChild(startBtn);
+  document.body.appendChild(infoBtn);
+}
+
+
+function gameEnding() {
+  gameStop = document.createElement("div");
+  gameStop.id = "gamestop";
+  gameStop.style.display = "none";
+  gameStop.style.position = "absolute";
+  gameStop.style.width = 2000;
+  gameStop.style.height = 2000;
+  gameStop.style.fontSize = "50px";
+  gameStop.style.textAlign = "center";
+  gameStop.style.backgroundColor = "white";
+  gameStop.classList.add("overlay");
+
+  playBtn = document.createElement("BUTTON");
+  playBtn.id = "playbtn";
+  playBtn.style.display = "none";
+  playBtn.style.width = 200;
+  playBtn.style.height = 100;
+  playBtn.style.fontSize = "20px";
+  playBtn.style.top = "50%";
+  playBtn.style.left = "50%";
+  playBtn.classList.add("playBtn");
+  playBtn.addEventListener("click", function () {
+    restartGame();
+  });
+  playBtn.innerHTML = "Play Again";
+  document.body.appendChild(gameStop);
+  document.body.appendChild(playBtn);
+}
+
+function loadHUD() {
+  pointHud = document.createElement("div");
+  pointHud.id = "pointHud";
+  pointHud.style.position = "absolute";
+  //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+  pointHud.style.width = 400;
+  pointHud.style.height = 400;
+  pointHud.innerHTML = "0";
+  pointHud.style.fontSize = "80px";
+  pointHud.style.top = "10%";
+  pointHud.style.left = "80%";
+  document.body.appendChild(pointHud);
 }
