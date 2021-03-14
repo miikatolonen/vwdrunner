@@ -22,6 +22,7 @@ let camera,
   playBtn,
   infoBtn,
   startBtn,
+  githubBtn,
   mainMenu;
 
 //Game state
@@ -582,7 +583,25 @@ function menuInit() {
   infoBtn.style.left = "50%";
   infoBtn.classList.add("playBtn");
   infoBtn.innerHTML = "Game Info";
+  infoBtn.addEventListener("click", function() {
+    window.location.href = "/gamemanual.html";
+  })
   infobtndiv.appendChild(infoBtn);
+  
+  var githubdiv = document.createElement("div")
+  githubBtn = document.createElement("BUTTON");
+  githubBtn.id = "githubbtn";
+  githubBtn.style.width = 200;
+  githubBtn.style.height = 100;
+  githubBtn.style.fontSize = "20px";
+  githubBtn.style.top = "50%";
+  githubBtn.style.left = "50%";
+  githubBtn.classList.add("playBtn");
+  githubBtn.innerHTML = "Source Code";
+  githubBtn.addEventListener("click", function() {
+    window.location.href = "https://github.com/miikatolonen/vwdrunner";
+  })
+  githubdiv.appendChild(githubBtn);
 
   var startbtndiv = document.createElement("div")
   startBtn = document.createElement("BUTTON");
@@ -599,6 +618,7 @@ function menuInit() {
     infobtndiv.style.display = "none";
     startbtndiv.style.display = "none";
     title.style.display = "none";
+    githubdiv.style.display = "none";
     restartGame();
   });
   startbtndiv.appendChild(startBtn)
@@ -607,6 +627,7 @@ function menuInit() {
   document.getElementById("mainmenu").appendChild(startBtn);
   document.getElementById("mainmenu").appendChild(infobtndiv);
   document.getElementById("mainmenu").appendChild(startbtndiv);
+  document.getElementById("mainmenu").appendChild(githubdiv);
 }
 
 
