@@ -562,8 +562,11 @@ function menuInit() {
   mainMenu.style.height = 2000;
   mainMenu.style.fontSize = "50px";
   mainMenu.style.textAlign = "center";
-  mainMenu.style.backgroundColor = "white";
+  mainMenu.style.backgroundColor = "#908fff";
   mainMenu.classList.add("overlay");
+  var title = document.createElement("P")
+  title.innerText = "Robot Runner"
+  title.classList.add("title");
 
   infoBtn = document.createElement("BUTTON");
   infoBtn.id = "infobtn";
@@ -588,9 +591,11 @@ function menuInit() {
     mainMenu.style.display = "none";
     infoBtn.style.display = "none";
     startBtn.style.display = "none";
+    title.style.display = "none";
     restartGame();
   });
   document.body.appendChild(mainMenu);
+  document.getElementById("mainmenu").appendChild(title)
   document.getElementById("mainmenu").appendChild(startBtn);
   document.getElementById("mainmenu").appendChild(infoBtn);
 }
