@@ -26,7 +26,7 @@ button {
 	display: inline-block;
     vertical-align: middle;
     margin: 0 0 1rem 0;
-    font-family: inherit;
+    font-family: 'Press Start 2P', cursive;
     padding: 1.25em 3em;
     border-radius: 50px;
     font-size: 1rem;
@@ -35,6 +35,11 @@ button {
     cursor: pointer;
     background-color: #FFBF5C;
     color: #ffffff;  
+}
+
+.playfultext {
+	font-family: 'Press Start 2P', cursive;
+	font-size: 1.5rem;
 }
 
 .playBtn:hover {
@@ -95,10 +100,10 @@ a, button, input, select {
 		cursor: pointer;
 	}
 
-#title {
-	font-family: 'Bungee Shade', cursive;
-	color: white;
-	background-color: white;
+.title {
+	font-family: 'Libre Barcode 39 Text', cursive;
+	font-size: 2em;
+	color: #FFBF5C;
 }
 
 

@@ -414,7 +414,10 @@ function cleanObstacles() {
 function EndGame() {
   game.finished = true;
   document.getElementById("game").style.display = "none";
-  gameStop.innerHTML = "Game over! You got " + game.points + " points";
+  var title = document.createElement("P")
+  title.innerText = "Game over! You got " + game.points + " points";
+  title.classList.add("playfultext");
+  gameStop.appendChild(title);
   gameStop.appendChild(playBtn);
   document.body.appendChild(gameStop);
   gameStop.style.display = "block";
@@ -562,7 +565,7 @@ function menuInit() {
   mainMenu.style.height = 2000;
   mainMenu.style.fontSize = "50px";
   mainMenu.style.textAlign = "center";
-  mainMenu.style.backgroundColor = "#908fff";
+  mainMenu.style.backgroundColor = "#A2EFFF";
   mainMenu.classList.add("overlay");
   var title = document.createElement("P")
   title.innerText = "Robot Runner"
@@ -610,7 +613,7 @@ function gameEnding() {
   gameStop.style.height = 2000;
   gameStop.style.fontSize = "50px";
   gameStop.style.textAlign = "center";
-  gameStop.style.backgroundColor = "white";
+  gameStop.style.backgroundColor = "#A2EFFF";
   gameStop.classList.add("overlay");
 
   playBtn = document.createElement("BUTTON");
