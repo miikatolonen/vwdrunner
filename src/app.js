@@ -416,7 +416,8 @@ function EndGame() {
   gameStop.innerHTML = "Game over! You got " + game.points + " points";
   gameStop.appendChild(playBtn);
   document.body.appendChild(gameStop);
-  document.getElementById("gamestop").style.display = "block";
+  gameStop.style.display = "block";
+  playBtn.style.display = "";
 }
 
 function restartGame() {
@@ -617,6 +618,7 @@ function gameEnding() {
   playBtn.style.left = "50%";
   playBtn.classList.add("playBtn");
   playBtn.addEventListener("click", function () {
+    gameStop.style.display = "none";
     restartGame();
   });
   playBtn.innerHTML = "Play Again";
