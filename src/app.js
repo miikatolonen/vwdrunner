@@ -50,7 +50,8 @@ var obstacleTypes = [];
 var obstacles = [];
 
 init();
-//GameSound();
+
+if (state.bgMusicPlay) { GameSound(); }
 
 function init() {
   container = document.createElement("div");
@@ -571,6 +572,7 @@ function menuInit() {
   title.innerText = "Robot Runner"
   title.classList.add("title");
 
+  var infobtndiv = document.createElement("div")
   infoBtn = document.createElement("BUTTON");
   infoBtn.id = "infobtn";
   infoBtn.style.width = 200;
@@ -580,7 +582,9 @@ function menuInit() {
   infoBtn.style.left = "50%";
   infoBtn.classList.add("playBtn");
   infoBtn.innerHTML = "Game Info";
+  infobtndiv.appendChild(infoBtn);
 
+  var startbtndiv = document.createElement("div")
   startBtn = document.createElement("BUTTON");
   startBtn.id = "startbtn";
   startBtn.style.width = 200;
@@ -592,15 +596,17 @@ function menuInit() {
   startBtn.innerHTML = "Start Game";
   startBtn.addEventListener("click", function () {
     mainMenu.style.display = "none";
-    infoBtn.style.display = "none";
-    startBtn.style.display = "none";
+    infobtndiv.style.display = "none";
+    startbtndiv.style.display = "none";
     title.style.display = "none";
     restartGame();
   });
+  startbtndiv.appendChild(startBtn)
   document.body.appendChild(mainMenu);
   document.getElementById("mainmenu").appendChild(title)
   document.getElementById("mainmenu").appendChild(startBtn);
-  document.getElementById("mainmenu").appendChild(infoBtn);
+  document.getElementById("mainmenu").appendChild(infobtndiv);
+  document.getElementById("mainmenu").appendChild(startbtndiv);
 }
 
 
