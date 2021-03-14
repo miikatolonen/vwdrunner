@@ -9,8 +9,9 @@ module.exports = {
   },
   devServer: {
     historyApiFallback: {
-        index: './public/index.html'
-      }
+        index: './public/index.html',
+      },
+	  port: 9000
   }, 
   module:{
     rules:[

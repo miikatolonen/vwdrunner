@@ -25,7 +25,7 @@ button {
 .playBtn {
 	display: inline-block;
     vertical-align: middle;
-    margin: 0 0 3rem 0;
+    margin: 0 0 2rem 0;
     font-family: 'Press Start 2P', cursive;
     padding: 1.25em 3em;
     border-radius: 50px;
@@ -101,6 +101,7 @@ a, button, input, select {
 	}
 
 .title {
+	margin-bottom: 25%;
 	font-family: 'Libre Barcode 39 Text', cursive;
 	font-size: 2em;
 	color: #FFBF5C;
