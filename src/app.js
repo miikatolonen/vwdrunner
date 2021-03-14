@@ -21,7 +21,8 @@ let camera,
   floor,
   playBtn,
   infoBtn,
-  startBtn;
+  startBtn,
+  mainMenu;
 
 //Game state
 const state = {
@@ -49,7 +50,7 @@ var obstacleTypes = [];
 var obstacles = [];
 
 init();
-
+//GameSound();
 
 function init() {
   container = document.createElement("div");
@@ -136,7 +137,7 @@ function init() {
   container.appendChild(renderer.domElement);
 
   window.addEventListener("resize", onWindowResize);
-  gameStarting();
+  menuInit();
   gameEnding();
   loadHUD();
 }
@@ -552,21 +553,20 @@ function smoothMoveToRight(targetPositionX) {
   }
 }
 
-function gameStarting() {
-  gameStart = document.createElement("div");
-  gameStart.style.display = "block";
-  gameStart.id = "game";
-  gameStart.style.position = "absolute";
-  gameStart.style.width = 2000;
-  gameStart.style.height = 2000;
-  gameStart.innerHTML = "ROBOT RUNNER"
-  gameStart.style.fontSize = "50px";
-  gameStart.style.textAlign = "center";
-  gameStart.style.backgroundColor = "white";
-  gameStart.classList.add("overlay");
+function menuInit() {
+  mainMenu = document.createElement("div");
+  mainMenu.style.display = "block";
+  mainMenu.id = "mainmenu";
+  mainMenu.style.position = "absolute";
+  mainMenu.style.width = 2000;
+  mainMenu.style.height = 2000;
+  mainMenu.style.fontSize = "50px";
+  mainMenu.style.textAlign = "center";
+  mainMenu.style.backgroundColor = "white";
+  mainMenu.classList.add("overlay");
 
   infoBtn = document.createElement("BUTTON");
-  infoBtn.id = "playbtn";
+  infoBtn.id = "infobtn";
   infoBtn.style.width = 200;
   infoBtn.style.height = 100;
   infoBtn.style.fontSize = "20px";
@@ -576,7 +576,7 @@ function gameStarting() {
   infoBtn.innerHTML = "Game Info";
 
   startBtn = document.createElement("BUTTON");
-  startBtn.id = "playbtn";
+  startBtn.id = "startbtn";
   startBtn.style.width = 200;
   startBtn.style.height = 100;
   startBtn.style.fontSize = "20px";
@@ -585,14 +585,14 @@ function gameStarting() {
   startBtn.classList.add("playBtn");
   startBtn.innerHTML = "Start Game";
   startBtn.addEventListener("click", function () {
-    gameStart.style.display = "none";
+    mainMenu.style.display = "none";
     infoBtn.style.display = "none";
     startBtn.style.display = "none";
     restartGame();
   });
-  document.body.appendChild(gameStart);
-  document.body.appendChild(startBtn);
-  document.body.appendChild(infoBtn);
+  document.body.appendChild(mainMenu);
+  document.getElementById("mainmenu").appendChild(startBtn);
+  document.getElementById("mainmenu").appendChild(infoBtn);
 }
 
 
