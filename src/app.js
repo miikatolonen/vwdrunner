@@ -30,8 +30,17 @@ const state = {
   moveLeft: false,
   moveRight: false,
   isJumping: false,
-  bgMusicPlay: false
+  bgMusicPlay: false,
 };
+
+//For mobile swipe support
+var min_horizontal_move = 30;
+var max_vertical_move = 30;
+var within_ms = 1000;
+
+var start_xPos;
+var start_yPos;
+var start_time;
 
 //Position of Character, 0 -> middle of the screen
 let position = 0;
@@ -57,7 +66,11 @@ function init() {
   container = document.createElement("div");
   container.id = "game";
   document.body.appendChild(container);
-  
+
+  //Init mobile
+  var content = document.getElementById("game");
+  content.addEventListener("touchstart", touch_start);
+  content.addEventListener("touchend", touch_end);
 
   camera = new THREE.PerspectiveCamera(
     40,
@@ -91,20 +104,17 @@ function init() {
   scene.add(dirLight);
 
   createSky();
-  
+
   //Loading Obstacles
   loadObstacleTypes();
 
   var asloader = new THREE.TextureLoader();
 
-  var grassTexture = asloader.load(
-    "src/models/desert.jpg",
-    function (texture) {
-      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-      texture.offset.set(0, 0);
-      texture.repeat.set(1, 512);
-    }
-  );
+  var grassTexture = asloader.load("src/models/desert.jpg", function (texture) {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.offset.set(0, 0);
+    texture.repeat.set(1, 512);
+  });
 
   floor = new THREE.Mesh(
     new THREE.PlaneGeometry(100, 100000, 8, 8),
@@ -168,7 +178,6 @@ function fadeToAction(duration) {
     .play();
 }
 
-
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -197,9 +206,55 @@ function loadObstacleTypes() {
       });
     });
    */
+  obstacleTypes = [];
+  mtlLoader.load("PropaneTank.mtl", function (materials) {
+    materials.preload();
+    objLoader.setMaterials(materials);
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+  });
+  objLoader.load("PropaneTank.obj", function (object) {
+    object.position.x = 0;
+    object.position.z = 350;
+    obstacleTypes.push(object);
+  });
+  objLoader.load("PropaneTank.obj", function (object) {
+    object.position.x = 0;
+    object.position.z = 300;
+    obstacleTypes.push(object);
+  });
+  objLoader.load("PropaneTank.obj", function (object) {
+    object.position.x = 0;
+    object.position.z = 400;
+    obstacleTypes.push(object);
+  });
+  objLoader.load("PropaneTank.obj", function (object) {
+    object.position.x = 5;
+    object.position.z = 350;
+    obstacleTypes.push(object);
+  });
+  objLoader.load("PropaneTank.obj", function (object) {
+    object.position.x = 15;
+    object.position.z = 300;
+    obstacleTypes.push(object);
+  });
+  objLoader.load("PropaneTank.obj", function (object) {
+    object.position.x = -10;
+    object.position.z = 350;
+    obstacleTypes.push(object);
+  });
+  objLoader.load("PropaneTank.obj", function (object) {
+    object.position.x = -15;
+    object.position.z = 325;
+    obstacleTypes.push(object);
+  });
 
   obstacleTypes = [];
 
+  /*
   if (obstaclePattern === 1) {
     //Two obstacles
     mtlLoader.load("PropaneTank.mtl", function (materials) {
@@ -285,6 +340,7 @@ function loadObstacleTypes() {
       });
     });
   }
+  */
 }
 
 //Generate Propanetanks
@@ -309,7 +365,7 @@ function moveObstacles() {
   for (var i = 0; i < obstacles.length; i++) {
     obstacles[i].position.z -= 20 * game.speed;
 
-    if (obstacles[i].position.z < -70) {
+    if (obstacles[i].position.z < -150) {
       //Load new obstacles when old disappear
       scene.remove(obstacles[i]);
       obstacles.pop(i);
@@ -321,11 +377,14 @@ function moveObstacles() {
   }
 }
 
-function createSky(){
-  const geometry = new THREE.CircleGeometry(2,32);
-  const material = new THREE.MeshBasicMaterial( {color: 0xffae00, side: THREE.DoubleSide} );
-  const sun = new THREE.Mesh( geometry, material );
-  sun.position.set(16,14,0);
+function createSky() {
+  const geometry = new THREE.CircleGeometry(2, 32);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xffae00,
+    side: THREE.DoubleSide,
+  });
+  const sun = new THREE.Mesh(geometry, material);
+  sun.position.set(16, 14, 0);
   //scene.add(sun);
   //scene.add(cloud);
   const imageLoader = new THREE.TextureLoader();
@@ -333,7 +392,6 @@ function createSky(){
       "src/sky.jpg"
   );
 }
-
 
 function detectCollision() {
   for (var i = 0; i < obstacles.length; i++) {
@@ -391,19 +449,23 @@ function EndSound() {
   endSound.src = "https://freesound.org/data/previews/404/404754_140737-lq.mp3";
   endSound.play();
 }
-function GameSound(){
-var gameSound = new Audio(); 
-gameSound.src ="https://freesound.org/data/previews/410/410574_625529-lq.mp3";
-if (typeof gameSound.loop == 'boolean')
-{
+function GameSound() {
+  var gameSound = new Audio();
+  gameSound.src =
+    "https://freesound.org/data/previews/410/410574_625529-lq.mp3";
+  if (typeof gameSound.loop == "boolean") {
     gameSound.loop = true;
-}else{
-    gameSound.addEventListener('ended', function() {
+  } else {
+    gameSound.addEventListener(
+      "ended",
+      function () {
         this.currentTime = 0;
         this.play();
-    }, false);
-}
-gameSound.play();
+      },
+      false
+    );
+  }
+  gameSound.play();
 }
 
 function cleanObstacles() {
@@ -415,7 +477,7 @@ function cleanObstacles() {
 function EndGame() {
   game.finished = true;
   document.getElementById("game").style.display = "none";
-  var title = document.createElement("P")
+  var title = document.createElement("P");
   title.innerText = "Game over! You got " + game.points + " points";
   title.classList.add("playfultext");
   gameStop.appendChild(title);
@@ -463,12 +525,24 @@ function onDocumentKeyDown(event) {
 
   if (model.position.y > 0) return;
   //Right 65 = A & 37 = <-
-  if ((keyCode == 65 || keyCode == 37) && !state.moveLeft) {
+  if (
+    (keyCode == 65 || keyCode == 37) &&
+    !state.moveLeft &&
+    (model.position.x === -15 ||
+      model.position.x === 0 ||
+      model.position.x === 15)
+  ) {
     state.moveLeft = true;
     updatePlayer();
   }
   //Left 68 = D & 39 = ->
-  else if ((keyCode == 68 || keyCode == 39) && !state.moveRight) {
+  else if (
+    (keyCode == 68 || keyCode == 39) &&
+    !state.moveRight &&
+    (model.position.x === -15 ||
+      model.position.x === 0 ||
+      model.position.x === 15)
+  ) {
     state.moveRight = true;
     updatePlayer();
   }
@@ -511,6 +585,27 @@ function updatePlayer() {
   }
 }
 
+function updatePlayerMobile() {
+  if (state.moveLeft && position < 0) {
+    state.moveLeft = false
+    position = 0;
+    smoothMoveToLeft(position);
+  } else if (state.moveLeft && position >= 0) {
+    state.moveLeft = false
+    position = 15;
+    smoothMoveToLeft(position);
+  } else if (state.moveRight && position > 0) {
+    state.moveRight = false
+    position = 0;
+    smoothMoveToRight(position);
+  } else if (state.moveRight && position <= 0) {
+    state.moveRight = false
+    position = -15;
+    smoothMoveToRight(position);
+  }
+}
+
+
 function setPosition(position) {
   model.position.x = position;
 }
@@ -527,7 +622,7 @@ function smoothMoveToLeft(targetPositionX) {
   targetPositionX = position;
 
   if (model.position.x < targetPositionX) {
-    model.position.x += 0.4;
+    model.position.x += 1;
     setPosition(model.position.x);
     requestAnimationFrame(smoothMoveToLeft);
   }
@@ -544,7 +639,7 @@ function smoothMoveToRight(targetPositionX) {
   targetPositionX = position;
 
   if (model.position.x > targetPositionX) {
-    model.position.x -= 0.4;
+    model.position.x -= 1;
     setPosition(model.position.x);
     requestAnimationFrame(smoothMoveToRight);
   }
@@ -554,6 +649,36 @@ function smoothMoveToRight(targetPositionX) {
   ) {
     model.position.x = targetPositionX;
     setPosition(model.position.x);
+  }
+}
+
+function touch_start(event) {
+  start_xPos = event.touches[0].pageX;
+  start_yPos = event.touches[0].pageY;
+  start_time = new Date();
+}
+
+function touch_end(event) {
+  var end_xPos = event.changedTouches[0].pageX;
+  var end_yPos = event.changedTouches[0].pageY;
+  var end_time = new Date();
+  let move_x = end_xPos - start_xPos;
+  let move_y = end_yPos - start_yPos;
+  let elapsed_time = end_time - start_time;
+  if (
+    Math.abs(move_x) > min_horizontal_move &&
+    Math.abs(move_y) < max_vertical_move &&
+    elapsed_time < within_ms
+  ) {
+    if (move_x < 0) {
+      
+      state.moveLeft = true;
+      updatePlayerMobile();
+    }
+    
+  } else {
+    state.moveRight = true;
+    updatePlayerMobile();
   }
 }
 
@@ -568,11 +693,11 @@ function menuInit() {
   mainMenu.style.textAlign = "center";
   mainMenu.style.backgroundColor = "#A2EFFF";
   mainMenu.classList.add("overlay");
-  var title = document.createElement("P")
-  title.innerText = "Robot Runner"
+  var title = document.createElement("P");
+  title.innerText = "Robot Runner";
   title.classList.add("title");
 
-  var infobtndiv = document.createElement("div")
+  var infobtndiv = document.createElement("div");
   infoBtn = document.createElement("BUTTON");
   infoBtn.id = "infobtn";
   infoBtn.style.width = 200;
@@ -586,8 +711,8 @@ function menuInit() {
     window.location.href = "gamemanual.html";
   })
   infobtndiv.appendChild(infoBtn);
-  
-  var githubdiv = document.createElement("div")
+
+  var githubdiv = document.createElement("div");
   githubBtn = document.createElement("BUTTON");
   githubBtn.id = "githubbtn";
   githubBtn.style.width = 200;
@@ -597,12 +722,12 @@ function menuInit() {
   githubBtn.style.left = "50%";
   githubBtn.classList.add("playBtn");
   githubBtn.innerHTML = "Source Code";
-  githubBtn.addEventListener("click", function() {
+  githubBtn.addEventListener("click", function () {
     window.location.href = "https://github.com/miikatolonen/vwdrunner";
-  })
+  });
   githubdiv.appendChild(githubBtn);
 
-  var startbtndiv = document.createElement("div")
+  var startbtndiv = document.createElement("div");
   startBtn = document.createElement("BUTTON");
   startBtn.id = "startbtn";
   startBtn.style.width = 200;
@@ -620,15 +745,14 @@ function menuInit() {
     githubdiv.style.display = "none";
     restartGame();
   });
-  startbtndiv.appendChild(startBtn)
+  startbtndiv.appendChild(startBtn);
   document.body.appendChild(mainMenu);
-  document.getElementById("mainmenu").appendChild(title)
+  document.getElementById("mainmenu").appendChild(title);
   document.getElementById("mainmenu").appendChild(startBtn);
   document.getElementById("mainmenu").appendChild(infobtndiv);
   document.getElementById("mainmenu").appendChild(startbtndiv);
   document.getElementById("mainmenu").appendChild(githubdiv);
 }
-
 
 function gameEnding() {
   gameStop = document.createElement("div");
