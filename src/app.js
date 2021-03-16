@@ -52,7 +52,7 @@ var obstacles = [];
 
 init();
 
-if (state.bgMusicPlay) { GameSound(); }
+GameSound(); 
 
 function init() {
   container = document.createElement("div");
