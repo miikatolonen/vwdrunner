@@ -5,6 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "gltf-webpack-loader": "^1.0.6",
+    "html-webpack-plugin": "^5.3.1",
     "stats-js": "^1.0.1",
     "three": "^0.125.2",
     "webpack": "^5.19.0",
