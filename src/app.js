@@ -331,7 +331,7 @@ function createSky(){
   //scene.add(cloud);
   const imageLoader = new THREE.TextureLoader();
   scene.background = imageLoader.load(
-      "/src/sky.jpg"
+      "./src/sky.jpg"
   );
 }
 
