@@ -583,7 +583,7 @@ function menuInit() {
   infoBtn.classList.add("playBtn");
   infoBtn.innerHTML = "Game Info";
   infoBtn.addEventListener("click", function() {
-    window.location.href = "/gamemanual.html";
+    window.location.href = "gamemanual.html";
   })
   infobtndiv.appendChild(infoBtn);
   
