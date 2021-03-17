@@ -15,9 +15,7 @@ let camera,
   renderer,
   model,
   pointHud,
-  gameStart,
   gameStop,
-  grid,
   floor,
   playBtn,
   infoBtn,
@@ -78,10 +76,8 @@ function init() {
     1,
     5000
   );
-  //camera.position.set( 5, 50, - 20  );
   camera.position.set(0, 8, -2);
-  //Object distance from camera
-  //camera.position.z = -25
+
   camera.position.z = -25;
 
   //Object position in screen
@@ -89,7 +85,6 @@ function init() {
 
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0055ff);
-  //scene.fog = new THREE.Fog(0xe0e0e0, 20, 100);
 
   clock = new THREE.Clock();
 
@@ -191,156 +186,505 @@ function loadObstacleTypes() {
   objLoader.setPath("src/models/");
   mtlLoader.setPath("src/models/");
 
-  let obstaclePattern = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
+  let obstaclePattern = Math.floor(Math.random() * (18 - 1 + 1)) + 1;
+
+  /*
+  for (let i = 0; i < random; i++) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x =
+        lines[Math.floor(Math.random() * (lines.length + 1 - 1 + 0)) + 0];
+      object.position.z = Math.floor(Math.random() * (400 - 300 + 1)) + 300;
+      obstacleTypes.push(object);
+    });
+  }
+  */
 
   //Two obstacles
 
-  /*
-    mtlLoader.load("PropaneTank.mtl", function (materials) {
-      materials.preload();
-      objLoader.setMaterials(materials);
-      objLoader.load("PropaneTank.obj", function (object) {
-        object.position.x = -15;
-        object.position.z = 400;
-        obstacleTypes.push(object);
-      });
-    });
-   */
-  obstacleTypes = [];
   mtlLoader.load("PropaneTank.mtl", function (materials) {
     materials.preload();
     objLoader.setMaterials(materials);
+  });
+
+  obstacleTypes = [];
+
+  if (obstaclePattern === 1) {
+    //Two obstacles
+
     objLoader.load("PropaneTank.obj", function (object) {
       object.position.x = -15;
       object.position.z = 400;
       obstacleTypes.push(object);
     });
-  });
-  objLoader.load("PropaneTank.obj", function (object) {
-    object.position.x = 0;
-    object.position.z = 350;
-    obstacleTypes.push(object);
-  });
-  objLoader.load("PropaneTank.obj", function (object) {
-    object.position.x = 0;
-    object.position.z = 300;
-    obstacleTypes.push(object);
-  });
-  objLoader.load("PropaneTank.obj", function (object) {
-    object.position.x = 0;
-    object.position.z = 400;
-    obstacleTypes.push(object);
-  });
-  objLoader.load("PropaneTank.obj", function (object) {
-    object.position.x = 5;
-    object.position.z = 350;
-    obstacleTypes.push(object);
-  });
-  objLoader.load("PropaneTank.obj", function (object) {
-    object.position.x = 15;
-    object.position.z = 300;
-    obstacleTypes.push(object);
-  });
-  objLoader.load("PropaneTank.obj", function (object) {
-    object.position.x = -10;
-    object.position.z = 350;
-    obstacleTypes.push(object);
-  });
-  objLoader.load("PropaneTank.obj", function (object) {
-    object.position.x = -15;
-    object.position.z = 325;
-    obstacleTypes.push(object);
-  });
 
-  obstacleTypes = [];
-
-  /*
-  if (obstaclePattern === 1) {
-    //Two obstacles
-    mtlLoader.load("PropaneTank.mtl", function (materials) {
-      materials.preload();
-      objLoader.setMaterials(materials);
-      objLoader.load("PropaneTank.obj", function (object) {
-        object.position.x = -15;
-        object.position.z = 400;
-        obstacleTypes.push(object);
-      });
-    });
-    mtlLoader.load("PropaneTank.mtl", function (materials) {
-      materials.preload();
-      objLoader.setMaterials(materials);
-      objLoader.load("PropaneTank.obj", function (object) {
-        object.position.x = 0;
-        object.position.z = 350;
-        obstacleTypes.push(object);
-      });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
     });
   } else if (obstaclePattern === 2) {
     //Three obstacles
-    mtlLoader.load("PropaneTank.mtl", function (materials) {
-      materials.preload();
-      objLoader.setMaterials(materials);
-      objLoader.load("PropaneTank.obj", function (object) {
-        object.position.x = -15;
-        object.position.z = 400;
-        obstacleTypes.push(object);
-      });
-      objLoader.load("PropaneTank.obj", function (object) {
-        object.position.x = 0;
-        object.position.z = 350;
-        obstacleTypes.push(object);
-      });
-      objLoader.load("PropaneTank.obj", function (object) {
-        object.position.x = 15;
-        object.position.z = 400;
-        obstacleTypes.push(object);
-      });
+
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 400;
+      obstacleTypes.push(object);
     });
   } else if (obstaclePattern === 3) {
     //One obstacle
-    mtlLoader.load("PropaneTank.mtl", function (materials) {
-      materials.preload();
-      objLoader.setMaterials(materials);
-      objLoader.load("PropaneTank.obj", function (object) {
-        object.position.x = -15;
-        object.position.z = 400;
-        obstacleTypes.push(object);
-      });
+
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 400;
+      obstacleTypes.push(object);
     });
   } else if (obstaclePattern === 4) {
     //Two obstacle, left and right
-    mtlLoader.load("PropaneTank.mtl", function (materials) {
-      materials.preload();
-      objLoader.setMaterials(materials);
-      objLoader.load("PropaneTank.obj", function (object) {
-        object.position.x = -15;
-        object.position.z = 400;
-        obstacleTypes.push(object);
-      });
-      objLoader.load("PropaneTank.obj", function (object) {
-        object.position.x = 15;
-        object.position.z = 400;
-        obstacleTypes.push(object);
-      });
+
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 400;
+      obstacleTypes.push(object);
     });
   } else if (obstaclePattern === 5) {
     // Two from middle
-    mtlLoader.load("PropaneTank.mtl", function (materials) {
-      materials.preload();
-      objLoader.setMaterials(materials);
-      objLoader.load("PropaneTank.obj", function (object) {
-        object.position.x = 0;
-        object.position.z = 400;
-        obstacleTypes.push(object);
-      });
-      objLoader.load("PropaneTank.obj", function (object) {
-        object.position.x = 0;
-        object.position.z = 350;
-        obstacleTypes.push(object);
-      });
+
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 6) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 5;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -10;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 325;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 7) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 380;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 360;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 380;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 360;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 380;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 360;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 8) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 5;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -10;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 325;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 9) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 5;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -10;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 325;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 10) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 5;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -10;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 325;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 11) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -10;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 325;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 12) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 5;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -10;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 325;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 13) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 5;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 325;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 14) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 5;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -10;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 15) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 325;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 16) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 400;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 5;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 17) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 5;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -10;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 325;
+      obstacleTypes.push(object);
+    });
+  } else if (obstaclePattern === 18) {
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 0;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = 15;
+      object.position.z = 300;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -10;
+      object.position.z = 350;
+      obstacleTypes.push(object);
+    });
+    objLoader.load("PropaneTank.obj", function (object) {
+      object.position.x = -15;
+      object.position.z = 325;
+      obstacleTypes.push(object);
     });
   }
-  */
 }
 
 //Generate Propanetanks
@@ -385,30 +729,13 @@ function createSky() {
   });
   const sun = new THREE.Mesh(geometry, material);
   sun.position.set(16, 14, 0);
-  //scene.add(sun);
-  //scene.add(cloud);
   const imageLoader = new THREE.TextureLoader();
-  scene.background = imageLoader.load(
-      "src/sky.jpg"
-  );
+  scene.background = imageLoader.load("src/sky.jpg");
 }
 
 function detectCollision() {
   for (var i = 0; i < obstacles.length; i++) {
-    console.log(
-      "Player position",
-      model.position.x,
-      model.position.y,
-      model.position.z
-    );
-    //console.log(obstacles[i].position.z);
-    console.log(
-      "Obstaakkeli: ",
-      Math.round(obstacles[i].position.x * 10) / 10 + 2,
-      Math.round(model.position.x * 10) / 10,
-      Math.round(obstacles[i].position.x * 10) / 10 - 2,
-      Math.round(model.position.x * 10) / 10
-    );
+  
     if (
       Math.round(obstacles[i].position.x * 10) / 10 + 2 >
         Math.round(model.position.x * 10) / 10 &&
@@ -587,24 +914,23 @@ function updatePlayer() {
 
 function updatePlayerMobile() {
   if (state.moveLeft && position < 0) {
-    state.moveLeft = false
+    state.moveLeft = false;
     position = 0;
     smoothMoveToLeft(position);
   } else if (state.moveLeft && position >= 0) {
-    state.moveLeft = false
+    state.moveLeft = false;
     position = 15;
     smoothMoveToLeft(position);
   } else if (state.moveRight && position > 0) {
-    state.moveRight = false
+    state.moveRight = false;
     position = 0;
     smoothMoveToRight(position);
   } else if (state.moveRight && position <= 0) {
-    state.moveRight = false
+    state.moveRight = false;
     position = -15;
     smoothMoveToRight(position);
   }
 }
-
 
 function setPosition(position) {
   model.position.x = position;
@@ -671,11 +997,9 @@ function touch_end(event) {
     elapsed_time < within_ms
   ) {
     if (move_x < 0) {
-      
       state.moveLeft = true;
       updatePlayerMobile();
     }
-    
   } else {
     state.moveRight = true;
     updatePlayerMobile();
@@ -707,9 +1031,9 @@ function menuInit() {
   infoBtn.style.left = "50%";
   infoBtn.classList.add("playBtn");
   infoBtn.innerHTML = "Game Info";
-  infoBtn.addEventListener("click", function() {
+  infoBtn.addEventListener("click", function () {
     window.location.href = "gamemanual.html";
-  })
+  });
   infobtndiv.appendChild(infoBtn);
 
   var githubdiv = document.createElement("div");
