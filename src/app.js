@@ -21,7 +21,15 @@ let camera,
   infoBtn,
   startBtn,
   githubBtn,
-  mainMenu;
+  mainMenu,
+  mainBtn,
+  playbtndiv,
+  mainbtndiv,
+  Titlediv,
+  title2,
+  title3,
+  title4;
+
 
 //Game state
 const state = {
@@ -804,12 +812,33 @@ function cleanObstacles() {
 function EndGame() {
   game.finished = true;
   document.getElementById("game").style.display = "none";
-  var title = document.createElement("P");
-  title.innerText = "Game over! You got " + game.points + " points";
-  title.classList.add("playfultext");
-  gameStop.appendChild(title);
-  gameStop.appendChild(playBtn);
-  gameStop.appendChild(mainBtn);
+  
+  
+  
+  Titlediv = document.createElement("div");
+  Titlediv.style.height = "40%";
+  Titlediv.style.top = "20%";
+  title2 = document.createElement("div");
+  title2.innerHTML = "Game Over!";
+  title2.classList.add("title2");
+
+  title3 = document.createElement("div");
+  title3.innerHTML = " Your score was: "
+  title3.classList.add("title3");
+
+ 
+
+  title4 = document.createElement("div");
+  title4.innerText = "" + game.points + "";
+  title4.classList.add("title4");
+
+  Titlediv.appendChild(title2);
+  Titlediv.appendChild(title3);
+  Titlediv.appendChild(title4);
+  
+  gameStop.appendChild(Titlediv);
+  gameStop.appendChild(playbtndiv);
+  gameStop.appendChild(mainbtndiv);
   document.body.appendChild(gameStop);
   gameStop.style.display = "block";
   playBtn.style.display = "";
@@ -1091,8 +1120,12 @@ function gameEnding() {
   gameStop.style.textAlign = "center";
   gameStop.style.backgroundColor = "#A2EFFF";
   gameStop.classList.add("overlay");
+  
 
-  var playbtndiv = document.createElement("div");
+ 
+
+  playbtndiv = document.createElement("div");
+  playbtndiv.style.top=  "50%";
   playBtn = document.createElement("BUTTON");
   playBtn.id = "playbtn";
   playBtn.style.display = "none";
@@ -1101,14 +1134,19 @@ function gameEnding() {
   playBtn.style.fontSize = "20px";
   playBtn.style.top = "50%";
   playBtn.style.left = "50%";
-  playBtn.classList.add("playBtn");
+  playBtn.classList.add("mainbtn");
   playBtn.addEventListener("click", function () {
     gameStop.style.display = "none";
+    title2.remove();
+    title3.remove();
+    title4.remove();
     restartGame();
+    
   });
   playbtndiv.appendChild(playBtn);
 
   mainbtndiv = document.createElement("div")
+  mainbtndiv.style.top = "75%";
   mainBtn = document.createElement("BUTTON");
   mainBtn.id ="mainbtn";
   mainBtn.style.display ="none";
@@ -1117,18 +1155,19 @@ function gameEnding() {
   mainBtn.style.fontSize = "20px";
   mainBtn.style.top = "50%";
   mainBtn.style.left = "50%";
-  mainBtn.classList.add("playBtn");
+  mainBtn.classList.add("mainbtn");
   mainBtn.innerHTML = "Main menu";
   mainBtn.addEventListener("click", function(){
     gameStop.style.display = "none";
-    menuInit();
+    document.getElementById("mainmenu").style.display = "block";
   })
   mainbtndiv.appendChild(mainBtn);
 
   playBtn.innerHTML = "Play Again";
   document.body.appendChild(gameStop);
-  document.body.appendChild(playBtn);
-  document.body.appendChild(mainBtn);
+  document.body.appendChild(playbtndiv);
+  document.body.appendChild(mainbtndiv);
+  
 }
 
 function loadHUD() {
