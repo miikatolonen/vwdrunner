@@ -813,7 +813,6 @@ function cleanObstacles() {
 function EndGame() {
   game.finished = true;
   document.getElementById("game").style.display = "none";
-<<<<<<< HEAD
   
   
   
@@ -841,18 +840,10 @@ function EndGame() {
   gameStop.appendChild(Titlediv);
   gameStop.appendChild(playbtndiv);
   gameStop.appendChild(mainbtndiv);
-=======
-  var title = document.createElement("P");
-  title.innerText = "Game over! You got " + game.points + " points";
-  title.classList.add("playfultext");
-  gameStop.appendChild(title);
-  gameStop.appendChild(playBtn);
-  //gameStop.appendChild(mainBtn);
->>>>>>> 9cdb170bebe80792d0c9853cacc912be891486e9
   document.body.appendChild(gameStop);
   gameStop.style.display = "block";
   playBtn.style.display = "";
-  //mainBtn.style.display ="";
+  mainBtn.style.display ="";
 }
 
 function restartGame() {
@@ -1140,14 +1131,10 @@ function gameEnding() {
   gameStop.classList.add("overlay");
   
 
-<<<<<<< HEAD
  
 
   playbtndiv = document.createElement("div");
   playbtndiv.style.top=  "50%";
-=======
-  //var playbtndiv = document.createElement("div");
->>>>>>> 9cdb170bebe80792d0c9853cacc912be891486e9
   playBtn = document.createElement("BUTTON");
   playBtn.id = "playbtn";
   playBtn.style.display = "none";
@@ -1165,7 +1152,6 @@ function gameEnding() {
     restartGame();
     
   });
-<<<<<<< HEAD
   playbtndiv.appendChild(playBtn);
 
   mainbtndiv = document.createElement("div")
@@ -1191,32 +1177,6 @@ function gameEnding() {
   document.body.appendChild(playbtndiv);
   document.body.appendChild(mainbtndiv);
   
-=======
-
-  //playbtndiv.appendChild(playBtn);
-
-  //  mainbtndiv = document.createElement("div")
-  //  mainBtn = document.createElement("BUTTON");
-  //  mainBtn.id ="mainbtn";
-  //  mainBtn.style.display ="none";
-  //  mainBtn.style.width = 200;
-  //  mainBtn.style.height = 100;
-  //  mainBtn.style.fontSize = "20px";
-  //  mainBtn.style.top = "50%";
-  //  mainBtn.style.left = "50%";
-  //  mainBtn.classList.add("playBtn");
-  //  mainBtn.innerHTML = "Main menu";
-  //  mainBtn.addEventListener("click", function(){
-  //    gameStop.style.display = "none";
-  //    menuInit();
-  //  })
-  //  mainbtndiv.appendChild(mainBtn);
-
-  playBtn.innerHTML = "Play Again";
-  document.body.appendChild(gameStop);
-  document.body.appendChild(playBtn);
-  //document.body.appendChild(mainBtn);
->>>>>>> 9cdb170bebe80792d0c9853cacc912be891486e9
 }
 
 function loadHUD() {
