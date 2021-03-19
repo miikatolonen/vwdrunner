@@ -136,10 +136,10 @@ select {
 }
 
 #kontti {
-  position:fixed;
+  position: fixed;
   top: 100px;
   left: 24%;
-  width:50%;
+  width: 50%;
   margin: 0 auto;
 }
 
