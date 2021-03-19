@@ -136,9 +136,29 @@ select {
 }
 
 #kontti {
-  position:fixed;
+  position: fixed;
   top: 100px;
   left: 24%;
-  width:50%;
+  width: 50%;
   margin: 0 auto;
+}
+
+#startbtn {
+  outline-style: none;
+}
+
+#githubbtn {
+  outline-style: none;
+}
+
+#infobtn {
+  outline-style: none;
+}
+
+#playbtn {
+  outline-style: none;
+}
+
+#gamestop {
+  outline-style: none;
 }
